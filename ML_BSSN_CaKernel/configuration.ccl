@@ -1,0 +1,6 @@
+# File produced by Kranc
+
+REQUIRES GenericFD
+REQUIRES LoopControl
+REQUIRES Vectors
+REQUIRES CUDA MPI CaKernel

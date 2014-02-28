@@ -1,0 +1,574 @@
+# File produced by Kranc
+
+
+STORAGE: Den_group[timelevels]
+
+STORAGE: S_group[timelevels]
+
+STORAGE: En_group[timelevels]
+
+STORAGE: rho_group[other_timelevels]
+
+STORAGE: v_group[other_timelevels]
+
+STORAGE: p_group[other_timelevels]
+
+STORAGE: Den_flux_group[other_timelevels]
+
+STORAGE: Den_lr_group[other_timelevels]
+
+STORAGE: En_flux_group[other_timelevels]
+
+STORAGE: En_lr_group[other_timelevels]
+
+STORAGE: p_lr_group[other_timelevels]
+
+STORAGE: rho_lr_group[other_timelevels]
+
+STORAGE: S1_flux_group[other_timelevels]
+
+STORAGE: S1_lr_group[other_timelevels]
+
+STORAGE: S2_flux_group[other_timelevels]
+
+STORAGE: S2_lr_group[other_timelevels]
+
+STORAGE: S3_flux_group[other_timelevels]
+
+STORAGE: S3_lr_group[other_timelevels]
+
+STORAGE: v1_lr_group[other_timelevels]
+
+STORAGE: v2_lr_group[other_timelevels]
+
+STORAGE: v3_lr_group[other_timelevels]
+
+STORAGE: Den_grouprhs[rhs_timelevels]
+
+STORAGE: En_grouprhs[rhs_timelevels]
+
+STORAGE: S_grouprhs[rhs_timelevels]
+
+schedule ConservationCalculation_Startup at STARTUP
+{
+  LANG: C
+  OPTIONS: meta
+} "create banner"
+
+schedule ConservationCalculation_RegisterSymmetries in SymmetryRegister
+{
+  LANG: C
+  OPTIONS: meta
+} "register symmetries"
+
+schedule eulerauto_cons_calc_zero_rhs in MoL_CalcRHS
+{
+  LANG: C
+  WRITES: ConservationCalculation::Denrhs(Everywhere)
+  WRITES: ConservationCalculation::Enrhs(Everywhere)
+  WRITES: ConservationCalculation::S1rhs(Everywhere)
+  WRITES: ConservationCalculation::S2rhs(Everywhere)
+  WRITES: ConservationCalculation::S3rhs(Everywhere)
+} "eulerauto_cons_calc_zero_rhs"
+
+schedule eulerauto_cons_calc_conserved at POSTINITIAL
+{
+  LANG: C
+  READS: ConservationCalculation::p(Everywhere)
+  READS: ConservationCalculation::rho(Everywhere)
+  READS: ConservationCalculation::v1(Everywhere)
+  READS: ConservationCalculation::v2(Everywhere)
+  READS: ConservationCalculation::v3(Everywhere)
+  WRITES: ConservationCalculation::Den(Everywhere)
+  WRITES: ConservationCalculation::En(Everywhere)
+  WRITES: ConservationCalculation::S1(Everywhere)
+  WRITES: ConservationCalculation::S2(Everywhere)
+  WRITES: ConservationCalculation::S3(Everywhere)
+} "eulerauto_cons_calc_conserved"
+
+schedule eulerauto_cons_calc_primitives in MoL_PostStep after ConservationCalculation_ApplyBCs
+{
+  LANG: C
+  READS: ConservationCalculation::Den(Everywhere)
+  READS: ConservationCalculation::En(Everywhere)
+  READS: ConservationCalculation::S1(Everywhere)
+  READS: ConservationCalculation::S2(Everywhere)
+  READS: ConservationCalculation::S3(Everywhere)
+  WRITES: ConservationCalculation::p(Everywhere)
+  WRITES: ConservationCalculation::rho(Everywhere)
+  WRITES: ConservationCalculation::v1(Everywhere)
+  WRITES: ConservationCalculation::v2(Everywhere)
+  WRITES: ConservationCalculation::v3(Everywhere)
+} "eulerauto_cons_calc_primitives"
+
+schedule group eulerauto_cons_calc_reconstruct_1_group in MoL_CalcRHS after eulerauto_cons_calc_zero_rhs
+{
+} "eulerauto_cons_calc_reconstruct_1"
+
+schedule eulerauto_cons_calc_reconstruct_1 in eulerauto_cons_calc_reconstruct_1_group
+{
+  LANG: C
+  READS: ConservationCalculation::p(Everywhere)
+  READS: ConservationCalculation::rho(Everywhere)
+  READS: ConservationCalculation::v1(Everywhere)
+  READS: ConservationCalculation::v2(Everywhere)
+  READS: ConservationCalculation::v3(Everywhere)
+  WRITES: ConservationCalculation::pLeft(Interior)
+  WRITES: ConservationCalculation::pRight(Interior)
+  WRITES: ConservationCalculation::rhoLeft(Interior)
+  WRITES: ConservationCalculation::rhoRight(Interior)
+  WRITES: ConservationCalculation::v1Left(Interior)
+  WRITES: ConservationCalculation::v1Right(Interior)
+  WRITES: ConservationCalculation::v2Left(Interior)
+  WRITES: ConservationCalculation::v2Right(Interior)
+  WRITES: ConservationCalculation::v3Left(Interior)
+  WRITES: ConservationCalculation::v3Right(Interior)
+} "eulerauto_cons_calc_reconstruct_1"
+
+schedule eulerauto_cons_calc_reconstruct_1_SelectBCs in eulerauto_cons_calc_reconstruct_1_bc_group
+{
+  LANG: C
+  OPTIONS: level
+  SYNC: p_lr_group
+  SYNC: rho_lr_group
+  SYNC: v1_lr_group
+  SYNC: v2_lr_group
+  SYNC: v3_lr_group
+} "eulerauto_cons_calc_reconstruct_1_SelectBCs"
+
+schedule group ApplyBCs as eulerauto_cons_calc_reconstruct_1_ApplyBCs in eulerauto_cons_calc_reconstruct_1_bc_group after eulerauto_cons_calc_reconstruct_1_SelectBCs
+{
+} "Apply BCs for groups set in eulerauto_cons_calc_reconstruct_1"
+
+schedule group eulerauto_cons_calc_reconstruct_1_bc_group in eulerauto_cons_calc_reconstruct_1_group after eulerauto_cons_calc_reconstruct_1
+{
+} "eulerauto_cons_calc_reconstruct_1"
+
+schedule group eulerauto_cons_calc_reconstruct_1_bc_group in MoL_PseudoEvolutionBoundaries after MoL_PostStep
+{
+} "eulerauto_cons_calc_reconstruct_1"
+
+schedule eulerauto_cons_calc_intercell_conserved_1 in MoL_CalcRHS after eulerauto_cons_calc_reconstruct_1
+{
+  LANG: C
+  READS: ConservationCalculation::pLeft(Everywhere)
+  READS: ConservationCalculation::pRight(Everywhere)
+  READS: ConservationCalculation::rhoLeft(Everywhere)
+  READS: ConservationCalculation::rhoRight(Everywhere)
+  READS: ConservationCalculation::v1Left(Everywhere)
+  READS: ConservationCalculation::v1Right(Everywhere)
+  READS: ConservationCalculation::v2Left(Everywhere)
+  READS: ConservationCalculation::v2Right(Everywhere)
+  READS: ConservationCalculation::v3Left(Everywhere)
+  READS: ConservationCalculation::v3Right(Everywhere)
+  WRITES: ConservationCalculation::DenLeft(Everywhere)
+  WRITES: ConservationCalculation::DenRight(Everywhere)
+  WRITES: ConservationCalculation::EnLeft(Everywhere)
+  WRITES: ConservationCalculation::EnRight(Everywhere)
+  WRITES: ConservationCalculation::S1Left(Everywhere)
+  WRITES: ConservationCalculation::S1Right(Everywhere)
+  WRITES: ConservationCalculation::S2Left(Everywhere)
+  WRITES: ConservationCalculation::S2Right(Everywhere)
+  WRITES: ConservationCalculation::S3Left(Everywhere)
+  WRITES: ConservationCalculation::S3Right(Everywhere)
+} "eulerauto_cons_calc_intercell_conserved_1"
+
+schedule group eulerauto_cons_calc_flux_1_group in MoL_CalcRHS after eulerauto_cons_calc_intercell_conserved_1
+{
+} "eulerauto_cons_calc_flux_1"
+
+schedule eulerauto_cons_calc_flux_1 in eulerauto_cons_calc_flux_1_group
+{
+  LANG: C
+  READS: ConservationCalculation::DenLeft(Everywhere)
+  READS: ConservationCalculation::DenRight(Everywhere)
+  READS: ConservationCalculation::EnLeft(Everywhere)
+  READS: ConservationCalculation::EnRight(Everywhere)
+  READS: ConservationCalculation::pLeft(Everywhere)
+  READS: ConservationCalculation::pRight(Everywhere)
+  READS: ConservationCalculation::rhoLeft(Everywhere)
+  READS: ConservationCalculation::rhoRight(Everywhere)
+  READS: ConservationCalculation::S1Left(Everywhere)
+  READS: ConservationCalculation::S1Right(Everywhere)
+  READS: ConservationCalculation::S2Left(Everywhere)
+  READS: ConservationCalculation::S2Right(Everywhere)
+  READS: ConservationCalculation::S3Left(Everywhere)
+  READS: ConservationCalculation::S3Right(Everywhere)
+  READS: ConservationCalculation::v1Left(Everywhere)
+  READS: ConservationCalculation::v1Right(Everywhere)
+  READS: ConservationCalculation::v2Left(Everywhere)
+  READS: ConservationCalculation::v2Right(Everywhere)
+  READS: ConservationCalculation::v3Left(Everywhere)
+  READS: ConservationCalculation::v3Right(Everywhere)
+  WRITES: ConservationCalculation::DenFlux(Interior)
+  WRITES: ConservationCalculation::EnFlux(Interior)
+  WRITES: ConservationCalculation::S1Flux(Interior)
+  WRITES: ConservationCalculation::S2Flux(Interior)
+  WRITES: ConservationCalculation::S3Flux(Interior)
+} "eulerauto_cons_calc_flux_1"
+
+schedule eulerauto_cons_calc_flux_1_SelectBCs in eulerauto_cons_calc_flux_1_bc_group
+{
+  LANG: C
+  OPTIONS: level
+  SYNC: Den_flux_group
+  SYNC: En_flux_group
+  SYNC: S1_flux_group
+  SYNC: S2_flux_group
+  SYNC: S3_flux_group
+} "eulerauto_cons_calc_flux_1_SelectBCs"
+
+schedule group ApplyBCs as eulerauto_cons_calc_flux_1_ApplyBCs in eulerauto_cons_calc_flux_1_bc_group after eulerauto_cons_calc_flux_1_SelectBCs
+{
+} "Apply BCs for groups set in eulerauto_cons_calc_flux_1"
+
+schedule group eulerauto_cons_calc_flux_1_bc_group in eulerauto_cons_calc_flux_1_group after eulerauto_cons_calc_flux_1
+{
+} "eulerauto_cons_calc_flux_1"
+
+schedule group eulerauto_cons_calc_flux_1_bc_group in MoL_PseudoEvolutionBoundaries after MoL_PostStep
+{
+} "eulerauto_cons_calc_flux_1"
+
+schedule eulerauto_cons_calc_rhs_1 in MoL_CalcRHS after eulerauto_cons_calc_flux_1
+{
+  LANG: C
+  READS: ConservationCalculation::DenFlux(Everywhere)
+  READS: ConservationCalculation::EnFlux(Everywhere)
+  READS: ConservationCalculation::S1Flux(Everywhere)
+  READS: ConservationCalculation::S2Flux(Everywhere)
+  READS: ConservationCalculation::S3Flux(Everywhere)
+  READS: ConservationCalculation::Denrhs(Everywhere)
+  READS: ConservationCalculation::Enrhs(Everywhere)
+  READS: ConservationCalculation::S1rhs(Everywhere)
+  READS: ConservationCalculation::S2rhs(Everywhere)
+  READS: ConservationCalculation::S3rhs(Everywhere)
+  WRITES: ConservationCalculation::Denrhs(Interior)
+  WRITES: ConservationCalculation::Enrhs(Interior)
+  WRITES: ConservationCalculation::S1rhs(Interior)
+  WRITES: ConservationCalculation::S2rhs(Interior)
+  WRITES: ConservationCalculation::S3rhs(Interior)
+} "eulerauto_cons_calc_rhs_1"
+
+schedule group eulerauto_cons_calc_reconstruct_2_group in MoL_CalcRHS after eulerauto_cons_calc_rhs_1
+{
+} "eulerauto_cons_calc_reconstruct_2"
+
+schedule eulerauto_cons_calc_reconstruct_2 in eulerauto_cons_calc_reconstruct_2_group
+{
+  LANG: C
+  READS: ConservationCalculation::p(Everywhere)
+  READS: ConservationCalculation::rho(Everywhere)
+  READS: ConservationCalculation::v1(Everywhere)
+  READS: ConservationCalculation::v2(Everywhere)
+  READS: ConservationCalculation::v3(Everywhere)
+  WRITES: ConservationCalculation::pLeft(Interior)
+  WRITES: ConservationCalculation::pRight(Interior)
+  WRITES: ConservationCalculation::rhoLeft(Interior)
+  WRITES: ConservationCalculation::rhoRight(Interior)
+  WRITES: ConservationCalculation::v1Left(Interior)
+  WRITES: ConservationCalculation::v1Right(Interior)
+  WRITES: ConservationCalculation::v2Left(Interior)
+  WRITES: ConservationCalculation::v2Right(Interior)
+  WRITES: ConservationCalculation::v3Left(Interior)
+  WRITES: ConservationCalculation::v3Right(Interior)
+} "eulerauto_cons_calc_reconstruct_2"
+
+schedule eulerauto_cons_calc_reconstruct_2_SelectBCs in eulerauto_cons_calc_reconstruct_2_bc_group
+{
+  LANG: C
+  OPTIONS: level
+  SYNC: p_lr_group
+  SYNC: rho_lr_group
+  SYNC: v1_lr_group
+  SYNC: v2_lr_group
+  SYNC: v3_lr_group
+} "eulerauto_cons_calc_reconstruct_2_SelectBCs"
+
+schedule group ApplyBCs as eulerauto_cons_calc_reconstruct_2_ApplyBCs in eulerauto_cons_calc_reconstruct_2_bc_group after eulerauto_cons_calc_reconstruct_2_SelectBCs
+{
+} "Apply BCs for groups set in eulerauto_cons_calc_reconstruct_2"
+
+schedule group eulerauto_cons_calc_reconstruct_2_bc_group in eulerauto_cons_calc_reconstruct_2_group after eulerauto_cons_calc_reconstruct_2
+{
+} "eulerauto_cons_calc_reconstruct_2"
+
+schedule group eulerauto_cons_calc_reconstruct_2_bc_group in MoL_PseudoEvolutionBoundaries after MoL_PostStep
+{
+} "eulerauto_cons_calc_reconstruct_2"
+
+schedule eulerauto_cons_calc_intercell_conserved_2 in MoL_CalcRHS after eulerauto_cons_calc_reconstruct_2
+{
+  LANG: C
+  READS: ConservationCalculation::pLeft(Everywhere)
+  READS: ConservationCalculation::pRight(Everywhere)
+  READS: ConservationCalculation::rhoLeft(Everywhere)
+  READS: ConservationCalculation::rhoRight(Everywhere)
+  READS: ConservationCalculation::v1Left(Everywhere)
+  READS: ConservationCalculation::v1Right(Everywhere)
+  READS: ConservationCalculation::v2Left(Everywhere)
+  READS: ConservationCalculation::v2Right(Everywhere)
+  READS: ConservationCalculation::v3Left(Everywhere)
+  READS: ConservationCalculation::v3Right(Everywhere)
+  WRITES: ConservationCalculation::DenLeft(Everywhere)
+  WRITES: ConservationCalculation::DenRight(Everywhere)
+  WRITES: ConservationCalculation::EnLeft(Everywhere)
+  WRITES: ConservationCalculation::EnRight(Everywhere)
+  WRITES: ConservationCalculation::S1Left(Everywhere)
+  WRITES: ConservationCalculation::S1Right(Everywhere)
+  WRITES: ConservationCalculation::S2Left(Everywhere)
+  WRITES: ConservationCalculation::S2Right(Everywhere)
+  WRITES: ConservationCalculation::S3Left(Everywhere)
+  WRITES: ConservationCalculation::S3Right(Everywhere)
+} "eulerauto_cons_calc_intercell_conserved_2"
+
+schedule group eulerauto_cons_calc_flux_2_group in MoL_CalcRHS after eulerauto_cons_calc_intercell_conserved_2
+{
+} "eulerauto_cons_calc_flux_2"
+
+schedule eulerauto_cons_calc_flux_2 in eulerauto_cons_calc_flux_2_group
+{
+  LANG: C
+  READS: ConservationCalculation::DenLeft(Everywhere)
+  READS: ConservationCalculation::DenRight(Everywhere)
+  READS: ConservationCalculation::EnLeft(Everywhere)
+  READS: ConservationCalculation::EnRight(Everywhere)
+  READS: ConservationCalculation::pLeft(Everywhere)
+  READS: ConservationCalculation::pRight(Everywhere)
+  READS: ConservationCalculation::rhoLeft(Everywhere)
+  READS: ConservationCalculation::rhoRight(Everywhere)
+  READS: ConservationCalculation::S1Left(Everywhere)
+  READS: ConservationCalculation::S1Right(Everywhere)
+  READS: ConservationCalculation::S2Left(Everywhere)
+  READS: ConservationCalculation::S2Right(Everywhere)
+  READS: ConservationCalculation::S3Left(Everywhere)
+  READS: ConservationCalculation::S3Right(Everywhere)
+  READS: ConservationCalculation::v1Left(Everywhere)
+  READS: ConservationCalculation::v1Right(Everywhere)
+  READS: ConservationCalculation::v2Left(Everywhere)
+  READS: ConservationCalculation::v2Right(Everywhere)
+  READS: ConservationCalculation::v3Left(Everywhere)
+  READS: ConservationCalculation::v3Right(Everywhere)
+  WRITES: ConservationCalculation::DenFlux(Interior)
+  WRITES: ConservationCalculation::EnFlux(Interior)
+  WRITES: ConservationCalculation::S1Flux(Interior)
+  WRITES: ConservationCalculation::S2Flux(Interior)
+  WRITES: ConservationCalculation::S3Flux(Interior)
+} "eulerauto_cons_calc_flux_2"
+
+schedule eulerauto_cons_calc_flux_2_SelectBCs in eulerauto_cons_calc_flux_2_bc_group
+{
+  LANG: C
+  OPTIONS: level
+  SYNC: Den_flux_group
+  SYNC: En_flux_group
+  SYNC: S1_flux_group
+  SYNC: S2_flux_group
+  SYNC: S3_flux_group
+} "eulerauto_cons_calc_flux_2_SelectBCs"
+
+schedule group ApplyBCs as eulerauto_cons_calc_flux_2_ApplyBCs in eulerauto_cons_calc_flux_2_bc_group after eulerauto_cons_calc_flux_2_SelectBCs
+{
+} "Apply BCs for groups set in eulerauto_cons_calc_flux_2"
+
+schedule group eulerauto_cons_calc_flux_2_bc_group in eulerauto_cons_calc_flux_2_group after eulerauto_cons_calc_flux_2
+{
+} "eulerauto_cons_calc_flux_2"
+
+schedule group eulerauto_cons_calc_flux_2_bc_group in MoL_PseudoEvolutionBoundaries after MoL_PostStep
+{
+} "eulerauto_cons_calc_flux_2"
+
+schedule eulerauto_cons_calc_rhs_2 in MoL_CalcRHS after eulerauto_cons_calc_flux_2
+{
+  LANG: C
+  READS: ConservationCalculation::DenFlux(Everywhere)
+  READS: ConservationCalculation::EnFlux(Everywhere)
+  READS: ConservationCalculation::S1Flux(Everywhere)
+  READS: ConservationCalculation::S2Flux(Everywhere)
+  READS: ConservationCalculation::S3Flux(Everywhere)
+  READS: ConservationCalculation::Denrhs(Everywhere)
+  READS: ConservationCalculation::Enrhs(Everywhere)
+  READS: ConservationCalculation::S1rhs(Everywhere)
+  READS: ConservationCalculation::S2rhs(Everywhere)
+  READS: ConservationCalculation::S3rhs(Everywhere)
+  WRITES: ConservationCalculation::Denrhs(Interior)
+  WRITES: ConservationCalculation::Enrhs(Interior)
+  WRITES: ConservationCalculation::S1rhs(Interior)
+  WRITES: ConservationCalculation::S2rhs(Interior)
+  WRITES: ConservationCalculation::S3rhs(Interior)
+} "eulerauto_cons_calc_rhs_2"
+
+schedule group eulerauto_cons_calc_reconstruct_3_group in MoL_CalcRHS after eulerauto_cons_calc_rhs_2
+{
+} "eulerauto_cons_calc_reconstruct_3"
+
+schedule eulerauto_cons_calc_reconstruct_3 in eulerauto_cons_calc_reconstruct_3_group
+{
+  LANG: C
+  READS: ConservationCalculation::p(Everywhere)
+  READS: ConservationCalculation::rho(Everywhere)
+  READS: ConservationCalculation::v1(Everywhere)
+  READS: ConservationCalculation::v2(Everywhere)
+  READS: ConservationCalculation::v3(Everywhere)
+  WRITES: ConservationCalculation::pLeft(Interior)
+  WRITES: ConservationCalculation::pRight(Interior)
+  WRITES: ConservationCalculation::rhoLeft(Interior)
+  WRITES: ConservationCalculation::rhoRight(Interior)
+  WRITES: ConservationCalculation::v1Left(Interior)
+  WRITES: ConservationCalculation::v1Right(Interior)
+  WRITES: ConservationCalculation::v2Left(Interior)
+  WRITES: ConservationCalculation::v2Right(Interior)
+  WRITES: ConservationCalculation::v3Left(Interior)
+  WRITES: ConservationCalculation::v3Right(Interior)
+} "eulerauto_cons_calc_reconstruct_3"
+
+schedule eulerauto_cons_calc_reconstruct_3_SelectBCs in eulerauto_cons_calc_reconstruct_3_bc_group
+{
+  LANG: C
+  OPTIONS: level
+  SYNC: p_lr_group
+  SYNC: rho_lr_group
+  SYNC: v1_lr_group
+  SYNC: v2_lr_group
+  SYNC: v3_lr_group
+} "eulerauto_cons_calc_reconstruct_3_SelectBCs"
+
+schedule group ApplyBCs as eulerauto_cons_calc_reconstruct_3_ApplyBCs in eulerauto_cons_calc_reconstruct_3_bc_group after eulerauto_cons_calc_reconstruct_3_SelectBCs
+{
+} "Apply BCs for groups set in eulerauto_cons_calc_reconstruct_3"
+
+schedule group eulerauto_cons_calc_reconstruct_3_bc_group in eulerauto_cons_calc_reconstruct_3_group after eulerauto_cons_calc_reconstruct_3
+{
+} "eulerauto_cons_calc_reconstruct_3"
+
+schedule group eulerauto_cons_calc_reconstruct_3_bc_group in MoL_PseudoEvolutionBoundaries after MoL_PostStep
+{
+} "eulerauto_cons_calc_reconstruct_3"
+
+schedule eulerauto_cons_calc_intercell_conserved_3 in MoL_CalcRHS after eulerauto_cons_calc_reconstruct_3
+{
+  LANG: C
+  READS: ConservationCalculation::pLeft(Everywhere)
+  READS: ConservationCalculation::pRight(Everywhere)
+  READS: ConservationCalculation::rhoLeft(Everywhere)
+  READS: ConservationCalculation::rhoRight(Everywhere)
+  READS: ConservationCalculation::v1Left(Everywhere)
+  READS: ConservationCalculation::v1Right(Everywhere)
+  READS: ConservationCalculation::v2Left(Everywhere)
+  READS: ConservationCalculation::v2Right(Everywhere)
+  READS: ConservationCalculation::v3Left(Everywhere)
+  READS: ConservationCalculation::v3Right(Everywhere)
+  WRITES: ConservationCalculation::DenLeft(Everywhere)
+  WRITES: ConservationCalculation::DenRight(Everywhere)
+  WRITES: ConservationCalculation::EnLeft(Everywhere)
+  WRITES: ConservationCalculation::EnRight(Everywhere)
+  WRITES: ConservationCalculation::S1Left(Everywhere)
+  WRITES: ConservationCalculation::S1Right(Everywhere)
+  WRITES: ConservationCalculation::S2Left(Everywhere)
+  WRITES: ConservationCalculation::S2Right(Everywhere)
+  WRITES: ConservationCalculation::S3Left(Everywhere)
+  WRITES: ConservationCalculation::S3Right(Everywhere)
+} "eulerauto_cons_calc_intercell_conserved_3"
+
+schedule group eulerauto_cons_calc_flux_3_group in MoL_CalcRHS after eulerauto_cons_calc_intercell_conserved_3
+{
+} "eulerauto_cons_calc_flux_3"
+
+schedule eulerauto_cons_calc_flux_3 in eulerauto_cons_calc_flux_3_group
+{
+  LANG: C
+  READS: ConservationCalculation::DenLeft(Everywhere)
+  READS: ConservationCalculation::DenRight(Everywhere)
+  READS: ConservationCalculation::EnLeft(Everywhere)
+  READS: ConservationCalculation::EnRight(Everywhere)
+  READS: ConservationCalculation::pLeft(Everywhere)
+  READS: ConservationCalculation::pRight(Everywhere)
+  READS: ConservationCalculation::rhoLeft(Everywhere)
+  READS: ConservationCalculation::rhoRight(Everywhere)
+  READS: ConservationCalculation::S1Left(Everywhere)
+  READS: ConservationCalculation::S1Right(Everywhere)
+  READS: ConservationCalculation::S2Left(Everywhere)
+  READS: ConservationCalculation::S2Right(Everywhere)
+  READS: ConservationCalculation::S3Left(Everywhere)
+  READS: ConservationCalculation::S3Right(Everywhere)
+  READS: ConservationCalculation::v1Left(Everywhere)
+  READS: ConservationCalculation::v1Right(Everywhere)
+  READS: ConservationCalculation::v2Left(Everywhere)
+  READS: ConservationCalculation::v2Right(Everywhere)
+  READS: ConservationCalculation::v3Left(Everywhere)
+  READS: ConservationCalculation::v3Right(Everywhere)
+  WRITES: ConservationCalculation::DenFlux(Interior)
+  WRITES: ConservationCalculation::EnFlux(Interior)
+  WRITES: ConservationCalculation::S1Flux(Interior)
+  WRITES: ConservationCalculation::S2Flux(Interior)
+  WRITES: ConservationCalculation::S3Flux(Interior)
+} "eulerauto_cons_calc_flux_3"
+
+schedule eulerauto_cons_calc_flux_3_SelectBCs in eulerauto_cons_calc_flux_3_bc_group
+{
+  LANG: C
+  OPTIONS: level
+  SYNC: Den_flux_group
+  SYNC: En_flux_group
+  SYNC: S1_flux_group
+  SYNC: S2_flux_group
+  SYNC: S3_flux_group
+} "eulerauto_cons_calc_flux_3_SelectBCs"
+
+schedule group ApplyBCs as eulerauto_cons_calc_flux_3_ApplyBCs in eulerauto_cons_calc_flux_3_bc_group after eulerauto_cons_calc_flux_3_SelectBCs
+{
+} "Apply BCs for groups set in eulerauto_cons_calc_flux_3"
+
+schedule group eulerauto_cons_calc_flux_3_bc_group in eulerauto_cons_calc_flux_3_group after eulerauto_cons_calc_flux_3
+{
+} "eulerauto_cons_calc_flux_3"
+
+schedule group eulerauto_cons_calc_flux_3_bc_group in MoL_PseudoEvolutionBoundaries after MoL_PostStep
+{
+} "eulerauto_cons_calc_flux_3"
+
+schedule eulerauto_cons_calc_rhs_3 in MoL_CalcRHS after eulerauto_cons_calc_flux_3
+{
+  LANG: C
+  READS: ConservationCalculation::DenFlux(Everywhere)
+  READS: ConservationCalculation::EnFlux(Everywhere)
+  READS: ConservationCalculation::S1Flux(Everywhere)
+  READS: ConservationCalculation::S2Flux(Everywhere)
+  READS: ConservationCalculation::S3Flux(Everywhere)
+  READS: ConservationCalculation::Denrhs(Everywhere)
+  READS: ConservationCalculation::Enrhs(Everywhere)
+  READS: ConservationCalculation::S1rhs(Everywhere)
+  READS: ConservationCalculation::S2rhs(Everywhere)
+  READS: ConservationCalculation::S3rhs(Everywhere)
+  WRITES: ConservationCalculation::Denrhs(Interior)
+  WRITES: ConservationCalculation::Enrhs(Interior)
+  WRITES: ConservationCalculation::S1rhs(Interior)
+  WRITES: ConservationCalculation::S2rhs(Interior)
+  WRITES: ConservationCalculation::S3rhs(Interior)
+} "eulerauto_cons_calc_rhs_3"
+
+schedule ConservationCalculation_SelectBoundConds in MoL_PostStep
+{
+  LANG: C
+  OPTIONS: level
+  SYNC: Den_group
+  SYNC: S_group
+  SYNC: En_group
+} "select boundary conditions"
+
+schedule ConservationCalculation_CheckBoundaries at BASEGRID
+{
+  LANG: C
+  OPTIONS: meta
+} "check boundaries treatment"
+
+schedule ConservationCalculation_RegisterVars in MoL_Register
+{
+  LANG: C
+  OPTIONS: meta
+} "Register Variables for MoL"
+
+schedule group ApplyBCs as ConservationCalculation_ApplyBCs in MoL_PostStep after ConservationCalculation_SelectBoundConds
+{
+} "Apply boundary conditions controlled by thorn Boundary"

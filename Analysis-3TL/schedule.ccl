@@ -1,0 +1,46 @@
+# File produced by Kranc
+
+
+STORAGE: evolved_group[timelevels]
+
+schedule Analysis-3TL_Startup at STARTUP
+{
+  LANG: C
+  OPTIONS: meta
+} "create banner"
+
+schedule Analysis-3TL_RegisterSymmetries in SymmetryRegister
+{
+  LANG: C
+  OPTIONS: meta
+} "register symmetries"
+
+schedule initial_sine AT initial
+{
+  LANG: C
+  READS: grid::x(Everywhere)
+  WRITES: Analysis-3TL::phi(Everywhere)
+  WRITES: Analysis-3TL::pi(Everywhere)
+} "initial_sine"
+
+schedule Analysis-3TL_SelectBoundConds in MoL_PostStep
+{
+  LANG: C
+  OPTIONS: level
+} "select boundary conditions"
+
+schedule Analysis-3TL_CheckBoundaries at BASEGRID
+{
+  LANG: C
+  OPTIONS: meta
+} "check boundaries treatment"
+
+schedule Analysis-3TL_RegisterVars in MoL_Register
+{
+  LANG: C
+  OPTIONS: meta
+} "Register Variables for MoL"
+
+schedule group ApplyBCs as Analysis-3TL_ApplyBCs in MoL_PostStep after Analysis-3TL_SelectBoundConds
+{
+} "Apply boundary conditions controlled by thorn Boundary"

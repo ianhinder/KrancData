@@ -1,0 +1,6 @@
+# File produced by Kranc
+
+REQUIRES GenericFD
+REQUIRES LoopControl
+REQUIRES Boost CPPUtils FDCore HRSCCore
+REQUIRES Vectors
