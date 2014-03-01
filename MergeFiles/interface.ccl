@@ -39,3 +39,4 @@ CCTK_REAL evolved_grouprhs type=GF timelevels=3 tags='Prolongation="None"'
   phirhs,
   pirhs
 } "evolved_grouprhs"
+# comment at end of interface
