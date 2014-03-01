@@ -13,7 +13,7 @@ public:
   CCTK_REAL tangentB[3];
 };
 
-void SimpleWaveODE_TiledLoopOverInterior(cGH const * restrict const cctkGH,
+void TestSimpleWave_TiledLoopOverInterior(cGH const * restrict const cctkGH,
                                         void (calc)(const cGH* restrict const cctkGH, const KrancData &kd));
 
 #define GFOffset(u,di,dj,dk) KRANC_GFOFFSET3D(&u[index],di,dj,dk)

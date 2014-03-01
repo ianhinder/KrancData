@@ -17,7 +17,7 @@
 /* are currently applied in separate functions      */
 
 
-extern "C" void SimpleWave_CheckBoundaries(CCTK_ARGUMENTS)
+extern "C" void TestSimpleWave_CheckBoundaries(CCTK_ARGUMENTS)
 {
   DECLARE_CCTK_ARGUMENTS;
   DECLARE_CCTK_PARAMETERS;
@@ -25,7 +25,7 @@ extern "C" void SimpleWave_CheckBoundaries(CCTK_ARGUMENTS)
   return;
 }
 
-extern "C" void SimpleWave_SelectBoundConds(CCTK_ARGUMENTS)
+extern "C" void TestSimpleWave_SelectBoundConds(CCTK_ARGUMENTS)
 {
   DECLARE_CCTK_ARGUMENTS;
   DECLARE_CCTK_PARAMETERS;
@@ -38,9 +38,9 @@ extern "C" void SimpleWave_SelectBoundConds(CCTK_ARGUMENTS)
       CCTK_EQUALS(evolved_group_bound, "zero"  ) )
   {
     ierr = Boundary_SelectGroupForBC(cctkGH, CCTK_ALL_FACES, 1, -1,
-                      "SimpleWave::evolved_group", evolved_group_bound);
+                      "TestSimpleWave::evolved_group", evolved_group_bound);
     if (ierr < 0)
-       CCTK_WARN(0, "Failed to register evolved_group_bound BC for SimpleWave::evolved_group!");
+       CCTK_WARN(0, "Failed to register evolved_group_bound BC for TestSimpleWave::evolved_group!");
   }
   
   if (CCTK_EQUALS(phi_bound, "none"  ) ||
@@ -49,9 +49,9 @@ extern "C" void SimpleWave_SelectBoundConds(CCTK_ARGUMENTS)
       CCTK_EQUALS(phi_bound, "zero"  ) )
   {
     ierr = Boundary_SelectVarForBC(cctkGH, CCTK_ALL_FACES, 1, -1,
-                      "SimpleWave::phi", phi_bound);
+                      "TestSimpleWave::phi", phi_bound);
     if (ierr < 0)
-       CCTK_WARN(0, "Failed to register phi_bound BC for SimpleWave::phi!");
+       CCTK_WARN(0, "Failed to register phi_bound BC for TestSimpleWave::phi!");
   }
   
   if (CCTK_EQUALS(pi_bound, "none"  ) ||
@@ -60,9 +60,9 @@ extern "C" void SimpleWave_SelectBoundConds(CCTK_ARGUMENTS)
       CCTK_EQUALS(pi_bound, "zero"  ) )
   {
     ierr = Boundary_SelectVarForBC(cctkGH, CCTK_ALL_FACES, 1, -1,
-                      "SimpleWave::pi", pi_bound);
+                      "TestSimpleWave::pi", pi_bound);
     if (ierr < 0)
-       CCTK_WARN(0, "Failed to register pi_bound BC for SimpleWave::pi!");
+       CCTK_WARN(0, "Failed to register pi_bound BC for TestSimpleWave::pi!");
   }
   
   if (CCTK_EQUALS(evolved_group_bound, "radiative"))
@@ -77,10 +77,10 @@ extern "C" void SimpleWave_SelectBoundConds(CCTK_ARGUMENTS)
        CCTK_WARN(0, "could not set SPEED value in table!");
   
     ierr = Boundary_SelectGroupForBC(cctkGH, CCTK_ALL_FACES, 1, handle_evolved_group_bound, 
-                      "SimpleWave::evolved_group", "Radiation");
+                      "TestSimpleWave::evolved_group", "Radiation");
   
     if (ierr < 0)
-       CCTK_WARN(0, "Failed to register Radiation BC for SimpleWave::evolved_group!");
+       CCTK_WARN(0, "Failed to register Radiation BC for TestSimpleWave::evolved_group!");
   
   }
   
@@ -96,10 +96,10 @@ extern "C" void SimpleWave_SelectBoundConds(CCTK_ARGUMENTS)
         CCTK_WARN(0, "could not set SPEED value in table!");
   
     ierr = Boundary_SelectVarForBC(cctkGH, CCTK_ALL_FACES, 1, handle_phi_bound, 
-                      "SimpleWave::phi", "Radiation");
+                      "TestSimpleWave::phi", "Radiation");
   
     if (ierr < 0)
-       CCTK_WARN(0, "Failed to register Radiation BC for SimpleWave::phi!");
+       CCTK_WARN(0, "Failed to register Radiation BC for TestSimpleWave::phi!");
   
   }
   
@@ -115,10 +115,10 @@ extern "C" void SimpleWave_SelectBoundConds(CCTK_ARGUMENTS)
         CCTK_WARN(0, "could not set SPEED value in table!");
   
     ierr = Boundary_SelectVarForBC(cctkGH, CCTK_ALL_FACES, 1, handle_pi_bound, 
-                      "SimpleWave::pi", "Radiation");
+                      "TestSimpleWave::pi", "Radiation");
   
     if (ierr < 0)
-       CCTK_WARN(0, "Failed to register Radiation BC for SimpleWave::pi!");
+       CCTK_WARN(0, "Failed to register Radiation BC for TestSimpleWave::pi!");
   
   }
   
@@ -132,10 +132,10 @@ extern "C" void SimpleWave_SelectBoundConds(CCTK_ARGUMENTS)
         CCTK_WARN(0, "could not set SCALAR value in table!");
   
     ierr = Boundary_SelectGroupForBC(cctkGH, CCTK_ALL_FACES, 1, handle_evolved_group_bound, 
-                      "SimpleWave::evolved_group", "scalar");
+                      "TestSimpleWave::evolved_group", "scalar");
   
     if (ierr < 0)
-       CCTK_WARN(0, "Failed to register Scalar BC for SimpleWave::evolved_group!");
+       CCTK_WARN(0, "Failed to register Scalar BC for TestSimpleWave::evolved_group!");
   
   }
   
@@ -149,10 +149,10 @@ extern "C" void SimpleWave_SelectBoundConds(CCTK_ARGUMENTS)
       CCTK_WARN(0, "could not set SCALAR value in table!");
   
     ierr = Boundary_SelectVarForBC(cctkGH, CCTK_ALL_FACES, 1, handle_phi_bound, 
-                      "SimpleWave::phi", "scalar");
+                      "TestSimpleWave::phi", "scalar");
   
     if (ierr < 0)
-       CCTK_WARN(0, "Error in registering Scalar BC for SimpleWave::phi!");
+       CCTK_WARN(0, "Error in registering Scalar BC for TestSimpleWave::phi!");
   
   }
   
@@ -166,10 +166,10 @@ extern "C" void SimpleWave_SelectBoundConds(CCTK_ARGUMENTS)
       CCTK_WARN(0, "could not set SCALAR value in table!");
   
     ierr = Boundary_SelectVarForBC(cctkGH, CCTK_ALL_FACES, 1, handle_pi_bound, 
-                      "SimpleWave::pi", "scalar");
+                      "TestSimpleWave::pi", "scalar");
   
     if (ierr < 0)
-       CCTK_WARN(0, "Error in registering Scalar BC for SimpleWave::pi!");
+       CCTK_WARN(0, "Error in registering Scalar BC for TestSimpleWave::pi!");
   
   }
   return;
@@ -178,20 +178,20 @@ extern "C" void SimpleWave_SelectBoundConds(CCTK_ARGUMENTS)
 
 
 /* template for entries in parameter file:
-#$bound$#SimpleWave::evolved_group_bound       = "skip"
-#$bound$#SimpleWave::evolved_group_bound_speed = 1.0
-#$bound$#SimpleWave::evolved_group_bound_limit = 0.0
-#$bound$#SimpleWave::evolved_group_bound_scalar = 0.0
+#$bound$#TestSimpleWave::evolved_group_bound       = "skip"
+#$bound$#TestSimpleWave::evolved_group_bound_speed = 1.0
+#$bound$#TestSimpleWave::evolved_group_bound_limit = 0.0
+#$bound$#TestSimpleWave::evolved_group_bound_scalar = 0.0
 
-#$bound$#SimpleWave::phi_bound       = "skip"
-#$bound$#SimpleWave::phi_bound_speed = 1.0
-#$bound$#SimpleWave::phi_bound_limit = 0.0
-#$bound$#SimpleWave::phi_bound_scalar = 0.0
+#$bound$#TestSimpleWave::phi_bound       = "skip"
+#$bound$#TestSimpleWave::phi_bound_speed = 1.0
+#$bound$#TestSimpleWave::phi_bound_limit = 0.0
+#$bound$#TestSimpleWave::phi_bound_scalar = 0.0
 
-#$bound$#SimpleWave::pi_bound       = "skip"
-#$bound$#SimpleWave::pi_bound_speed = 1.0
-#$bound$#SimpleWave::pi_bound_limit = 0.0
-#$bound$#SimpleWave::pi_bound_scalar = 0.0
+#$bound$#TestSimpleWave::pi_bound       = "skip"
+#$bound$#TestSimpleWave::pi_bound_speed = 1.0
+#$bound$#TestSimpleWave::pi_bound_limit = 0.0
+#$bound$#TestSimpleWave::pi_bound_scalar = 0.0
 
 */
 

@@ -22,21 +22,7 @@
 #define CUB(x) ((x) * SQR(x))
 #define QAD(x) (SQR(SQR(x)))
 
-extern "C" void calc_rhs_SelectBCs(CCTK_ARGUMENTS)
-{
-  DECLARE_CCTK_ARGUMENTS;
-  DECLARE_CCTK_PARAMETERS;
-  
-  if (cctk_iteration % calc_rhs_calc_every != calc_rhs_calc_offset)
-    return;
-  CCTK_INT ierr CCTK_ATTRIBUTE_UNUSED = 0;
-  ierr = Boundary_SelectGroupForBC(cctkGH, CCTK_ALL_FACES, GenericFD_GetBoundaryWidth(cctkGH), -1 /* no table */, "SimpleWave::evolved_grouprhs","flat");
-  if (ierr < 0)
-    CCTK_WARN(1, "Failed to register flat BC for SimpleWave::evolved_grouprhs.");
-  return;
-}
-
-static void calc_rhs_Body(const cGH* restrict const cctkGH, const int dir, const int face, const CCTK_REAL normal[3], const CCTK_REAL tangentA[3], const CCTK_REAL tangentB[3], const int imin[3], const int imax[3], const int n_subblock_gfs, CCTK_REAL* restrict const subblock_gfs[])
+static void initial_sine_Body(const cGH* restrict const cctkGH, const int dir, const int face, const CCTK_REAL normal[3], const CCTK_REAL tangentA[3], const CCTK_REAL tangentB[3], const int imin[3], const int imax[3], const int n_subblock_gfs, CCTK_REAL* restrict const subblock_gfs[])
 {
   DECLARE_CCTK_ARGUMENTS;
   DECLARE_CCTK_PARAMETERS;
@@ -94,7 +80,7 @@ static void calc_rhs_Body(const cGH* restrict const cctkGH, const int dir, const
   const int imax1=imax[1];
   const int imax2=imax[2];
   #pragma omp parallel // reduction(+: vec_iter_counter, vec_op_counter, vec_mem_counter)
-  CCTK_LOOP3(calc_rhs,
+  CCTK_LOOP3(initial_sine,
     i,j,k, imin0,imin1,imin2, imax0,imax1,imax2,
     cctk_ash[0],cctk_ash[1],cctk_ash[2])
   {
@@ -103,31 +89,26 @@ static void calc_rhs_Body(const cGH* restrict const cctkGH, const int dir, const
     
     /* Assign local copies of grid functions */
     
-    CCTK_REAL phiL CCTK_ATTRIBUTE_UNUSED = phi[index];
-    CCTK_REAL piL CCTK_ATTRIBUTE_UNUSED = pi[index];
+    CCTK_REAL xL CCTK_ATTRIBUTE_UNUSED = x[index];
     
     
     /* Include user supplied include files */
     
     /* Precompute derivatives */
-    const CCTK_REAL PDstandard2nd11phi CCTK_ATTRIBUTE_UNUSED = PDstandard2nd11(&phi[index]);
-    const CCTK_REAL PDstandard2nd22phi CCTK_ATTRIBUTE_UNUSED = PDstandard2nd22(&phi[index]);
-    const CCTK_REAL PDstandard2nd33phi CCTK_ATTRIBUTE_UNUSED = PDstandard2nd33(&phi[index]);
     
     /* Calculate temporaries and grid functions */
-    CCTK_REAL phirhsL CCTK_ATTRIBUTE_UNUSED = piL;
+    CCTK_REAL phiL CCTK_ATTRIBUTE_UNUSED = sin(2*Pi*(xL - t));
     
-    CCTK_REAL pirhsL CCTK_ATTRIBUTE_UNUSED = PDstandard2nd11phi + 
-      PDstandard2nd22phi + PDstandard2nd33phi;
+    CCTK_REAL piL CCTK_ATTRIBUTE_UNUSED = -2*Pi*cos(2*Pi*(xL - t));
     
     /* Copy local copies back to grid functions */
-    phirhs[index] = phirhsL;
-    pirhs[index] = pirhsL;
+    phi[index] = phiL;
+    pi[index] = piL;
   }
-  CCTK_ENDLOOP3(calc_rhs);
+  CCTK_ENDLOOP3(initial_sine);
 }
 
-extern "C" void calc_rhs(CCTK_ARGUMENTS)
+extern "C" void initial_sine(CCTK_ARGUMENTS)
 {
   DECLARE_CCTK_ARGUMENTS;
   DECLARE_CCTK_PARAMETERS;
@@ -135,25 +116,24 @@ extern "C" void calc_rhs(CCTK_ARGUMENTS)
   
   if (verbose > 1)
   {
-    CCTK_VInfo(CCTK_THORNSTRING,"Entering calc_rhs_Body");
+    CCTK_VInfo(CCTK_THORNSTRING,"Entering initial_sine_Body");
   }
   
-  if (cctk_iteration % calc_rhs_calc_every != calc_rhs_calc_offset)
+  if (cctk_iteration % initial_sine_calc_every != initial_sine_calc_offset)
   {
     return;
   }
   
   const char* const groups[] = {
-    "SimpleWave::evolved_group",
-    "SimpleWave::evolved_grouprhs"};
-  GenericFD_AssertGroupStorage(cctkGH, "calc_rhs", 2, groups);
+    "TestSimpleWaveODE::evolved_group",
+    "grid::coordinates"};
+  GenericFD_AssertGroupStorage(cctkGH, "initial_sine", 2, groups);
   
-  GenericFD_EnsureStencilFits(cctkGH, "calc_rhs", 1, 1, 1);
   
-  GenericFD_LoopOverInterior(cctkGH, calc_rhs_Body);
+  GenericFD_LoopOverEverything(cctkGH, initial_sine_Body);
   
   if (verbose > 1)
   {
-    CCTK_VInfo(CCTK_THORNSTRING,"Leaving calc_rhs_Body");
+    CCTK_VInfo(CCTK_THORNSTRING,"Leaving initial_sine_Body");
   }
 }

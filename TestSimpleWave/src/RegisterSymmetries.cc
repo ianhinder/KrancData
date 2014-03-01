@@ -5,7 +5,7 @@
 #include "cctk_Parameters.h"
 #include "Symmetry.h"
 
-extern "C" void SimpleWave_RegisterSymmetries(CCTK_ARGUMENTS)
+extern "C" void TestSimpleWave_RegisterSymmetries(CCTK_ARGUMENTS)
 {
   DECLARE_CCTK_ARGUMENTS;
   DECLARE_CCTK_PARAMETERS;
@@ -19,11 +19,11 @@ extern "C" void SimpleWave_RegisterSymmetries(CCTK_ARGUMENTS)
   sym[0] = 1;
   sym[1] = 1;
   sym[2] = 1;
-  SetCartSymVN(cctkGH, sym, "SimpleWave::phi");
+  SetCartSymVN(cctkGH, sym, "TestSimpleWave::phi");
   
   sym[0] = 1;
   sym[1] = 1;
   sym[2] = 1;
-  SetCartSymVN(cctkGH, sym, "SimpleWave::pi");
+  SetCartSymVN(cctkGH, sym, "TestSimpleWave::pi");
   
 }

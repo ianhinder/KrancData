@@ -32,7 +32,7 @@
 #include "GenericFD.h"
 #include "Kranc.hh"
 
-void SimpleWaveODE_TiledLoopOverInterior(
+void TestSimpleWaveODE_TiledLoopOverInterior(
   cGH const * restrict const cctkGH,
   void (calc)(const cGH* restrict const cctkGH, const KrancData &kd))
 {

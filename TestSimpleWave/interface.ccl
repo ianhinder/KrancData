@@ -1,6 +1,6 @@
 # File produced by Kranc
 
-implements: SimpleWaveODE
+implements: TestSimpleWave
 
 inherits:   Boundary GenericFD Grid
 
@@ -39,10 +39,3 @@ CCTK_REAL evolved_grouprhs type=GF timelevels=3 tags='Prolongation="None"'
   phirhs,
   pirhs
 } "evolved_grouprhs"
-
-public:
-CCTK_REAL ode_group type=array timelevels=1 tags='' dim=1 size=1
-{
-  a,
-  b
-} "ode_group"
