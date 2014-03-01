@@ -14,6 +14,7 @@
 #include "Differencing.h"
 #include "cctk_Loop.h"
 #include "loopcontrol.h"
+#include "Kranc.hh"
 
 /* Define macros used in calculations */
 #define INITVALUE (42)
@@ -36,11 +37,15 @@ extern "C" void calc_rhs_SelectBCs(CCTK_ARGUMENTS)
   return;
 }
 
-static void calc_rhs_Body(const cGH* restrict const cctkGH, const int dir, const int face, const CCTK_REAL normal[3], const CCTK_REAL tangentA[3], const CCTK_REAL tangentB[3], const int imin[3], const int imax[3], const int n_subblock_gfs, CCTK_REAL* restrict const subblock_gfs[])
+static void calc_rhs_Body(const cGH* restrict const cctkGH, const KrancData &kd)
 {
   DECLARE_CCTK_ARGUMENTS;
   DECLARE_CCTK_PARAMETERS;
   
+  const int dir = kd.dir;
+  const int face = kd.face;
+  const int imin[3] = {kd.imin[0], kd.imin[1], kd.imin[2]};
+  const int imax[3] = {kd.imax[0], kd.imax[1], kd.imax[2]};
   
   /* Include user-supplied include files */
   
@@ -100,6 +105,9 @@ static void calc_rhs_Body(const cGH* restrict const cctkGH, const int dir, const
   {
     const ptrdiff_t index CCTK_ATTRIBUTE_UNUSED = di*i + dj*j + dk*k;
     // ++vec_iter_counter;
+    const int ti = i - kd.tile_imin[0];
+    const int tj = j - kd.tile_imin[1];
+    const int tk = k - kd.tile_imin[2];
     
     /* Assign local copies of grid functions */
     
@@ -150,7 +158,7 @@ extern "C" void calc_rhs(CCTK_ARGUMENTS)
   
   GenericFD_EnsureStencilFits(cctkGH, "calc_rhs", 1, 1, 1);
   
-  GenericFD_LoopOverInterior(cctkGH, calc_rhs_Body);
+  TilingTest_TiledLoopOverInterior(cctkGH, calc_rhs_Body);
   
   if (verbose > 1)
   {

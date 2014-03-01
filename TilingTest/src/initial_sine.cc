@@ -14,6 +14,7 @@
 #include "Differencing.h"
 #include "cctk_Loop.h"
 #include "loopcontrol.h"
+#include "Kranc.hh"
 
 /* Define macros used in calculations */
 #define INITVALUE (42)
