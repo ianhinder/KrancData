@@ -12,7 +12,6 @@
 #include "cctk_Parameters.h"
 #include "GenericFD.h"
 #include "Differencing.h"
-#include "cctk_Loop.h"
 #include "loopcontrol.h"
 #include "Kranc.hh"
 

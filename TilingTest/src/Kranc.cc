@@ -26,9 +26,6 @@
 // #include <stdlib.h>
 // #include <math.h>
 // #include <stdio.h>
-#include <iostream>
-
-using namespace std;
             
 #define KRANC_C
                                                 
@@ -70,7 +67,6 @@ void TilingTest_TiledLoopOverInterior(
     {
       for (int tk = 0; tk < tile_n[2]; tk++)
       {
-        cout << "t == [" << ti << "," << tj << "," << tk << "]" << endl;
         kd.tile_imin[0] = ti*tile_size_l[0];
         kd.tile_imax[0] = (ti+1)*tile_size_l[0];
         kd.tile_imin[1] = tj*tile_size_l[1];
