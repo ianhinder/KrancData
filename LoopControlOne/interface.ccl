@@ -7,6 +7,7 @@ inherits:   Boundary GenericFD Grid
 
 
 USES INCLUDE: GenericFD.h
+USES INCLUDE: loopcontrol.h
 USES INCLUDE: Symmetry.h
 USES INCLUDE: Boundary.h
 

@@ -12,6 +12,7 @@
 #include "cctk_Parameters.h"
 #include "GenericFD.h"
 #include "Differencing.h"
+#include "loopcontrol.h"
 #include "Kranc.hh"
 
 /* Define macros used in calculations */
