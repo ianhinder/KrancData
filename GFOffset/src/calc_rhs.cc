@@ -110,15 +110,20 @@ static void calc_rhs_Body(const cGH* restrict const cctkGH, const int dir, const
     /* Include user supplied include files */
     
     /* Precompute derivatives */
-    const CCTK_REAL PDstandard2nd11phi CCTK_ATTRIBUTE_UNUSED = PDstandard2nd11(&phi[index]);
-    const CCTK_REAL PDstandard2nd22phi CCTK_ATTRIBUTE_UNUSED = PDstandard2nd22(&phi[index]);
-    const CCTK_REAL PDstandard2nd33phi CCTK_ATTRIBUTE_UNUSED = PDstandard2nd33(&phi[index]);
     
     /* Calculate temporaries and grid functions */
+    CCTK_REAL pdphi11 CCTK_ATTRIBUTE_UNUSED = (-2*phiL + 
+      GFOffset(phi,-1,0,0) + GFOffset(phi,1,0,0))*INV(SQR(dx));
+    
+    CCTK_REAL pdphi22 CCTK_ATTRIBUTE_UNUSED = (-2*phiL + 
+      GFOffset(phi,0,-1,0) + GFOffset(phi,0,1,0))*INV(SQR(dy));
+    
+    CCTK_REAL pdphi33 CCTK_ATTRIBUTE_UNUSED = (-2*phiL + 
+      GFOffset(phi,0,0,-1) + GFOffset(phi,0,0,1))*INV(SQR(dz));
+    
     CCTK_REAL phirhsL CCTK_ATTRIBUTE_UNUSED = piL;
     
-    CCTK_REAL pirhsL CCTK_ATTRIBUTE_UNUSED = PDstandard2nd11phi + 
-      PDstandard2nd22phi + PDstandard2nd33phi;
+    CCTK_REAL pirhsL CCTK_ATTRIBUTE_UNUSED = pdphi11 + pdphi22 + pdphi33;
     
     /* Copy local copies back to grid functions */
     phirhs[index] = phirhsL;
@@ -148,7 +153,6 @@ extern "C" void calc_rhs(CCTK_ARGUMENTS)
     "GFOffset::evolved_grouprhs"};
   GenericFD_AssertGroupStorage(cctkGH, "calc_rhs", 2, groups);
   
-  GenericFD_EnsureStencilFits(cctkGH, "calc_rhs", 1, 1, 1);
   
   GenericFD_LoopOverInterior(cctkGH, calc_rhs_Body);
   
