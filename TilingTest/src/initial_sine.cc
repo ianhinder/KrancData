@@ -2,6 +2,7 @@
 
 #define KRANC_C
 
+#include <algorithm>
 #include <assert.h>
 #include <math.h>
 #include <stdio.h>
@@ -22,11 +23,19 @@
 #define CUB(x) ((x) * SQR(x))
 #define QAD(x) (SQR(SQR(x)))
 
-static void initial_sine_Body(const cGH* restrict const cctkGH, const int dir, const int face, const CCTK_REAL normal[3], const CCTK_REAL tangentA[3], const CCTK_REAL tangentB[3], const int imin[3], const int imax[3], const int n_subblock_gfs, CCTK_REAL* restrict const subblock_gfs[])
+static void initial_sine_Body(const cGH* restrict const cctkGH, const KrancData & restrict kd)
 {
   DECLARE_CCTK_ARGUMENTS;
   DECLARE_CCTK_PARAMETERS;
   
+  const int dir CCTK_ATTRIBUTE_UNUSED = kd.dir;
+  const int face CCTK_ATTRIBUTE_UNUSED = kd.face;
+  const int imin[3] = {std::max(kd.imin[0], kd.tile_imin[0]),
+                       std::max(kd.imin[1], kd.tile_imin[1]),
+                       std::max(kd.imin[2], kd.tile_imin[2])};
+  const int imax[3] = {std::min(kd.imax[0], kd.tile_imax[0]),
+                       std::min(kd.imax[1], kd.tile_imax[1]),
+                       std::min(kd.imax[2], kd.tile_imax[2])};
   
   /* Include user-supplied include files */
   
@@ -86,6 +95,9 @@ static void initial_sine_Body(const cGH* restrict const cctkGH, const int dir, c
   {
     const ptrdiff_t index CCTK_ATTRIBUTE_UNUSED = di*i + dj*j + dk*k;
     // ++vec_iter_counter;
+    const int ti CCTK_ATTRIBUTE_UNUSED = i - kd.tile_imin[0];
+    const int tj CCTK_ATTRIBUTE_UNUSED = j - kd.tile_imin[1];
+    const int tk CCTK_ATTRIBUTE_UNUSED = k - kd.tile_imin[2];
     
     /* Assign local copies of grid functions */
     
@@ -130,7 +142,7 @@ extern "C" void initial_sine(CCTK_ARGUMENTS)
   GenericFD_AssertGroupStorage(cctkGH, "initial_sine", 2, groups);
   
   
-  GenericFD_LoopOverEverything(cctkGH, initial_sine_Body);
+  TilingTest_TiledLoopOverEverything(cctkGH, initial_sine_Body);
   
   if (verbose > 1)
   {

@@ -2,6 +2,7 @@
 
 #define KRANC_C
 
+#include <algorithm>
 #include <assert.h>
 #include <math.h>
 #include <stdio.h>

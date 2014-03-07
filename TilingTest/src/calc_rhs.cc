@@ -2,6 +2,7 @@
 
 #define KRANC_C
 
+#include <algorithm>
 #include <assert.h>
 #include <math.h>
 #include <stdio.h>
@@ -36,15 +37,19 @@ extern "C" void calc_rhs_SelectBCs(CCTK_ARGUMENTS)
   return;
 }
 
-static void calc_rhs_Body(const cGH* restrict const cctkGH, const KrancData &kd)
+static void calc_rhs_Body(const cGH* restrict const cctkGH, const KrancData & restrict kd)
 {
   DECLARE_CCTK_ARGUMENTS;
   DECLARE_CCTK_PARAMETERS;
   
-  const int dir = kd.dir;
-  const int face = kd.face;
-  const int imin[3] = {kd.imin[0], kd.imin[1], kd.imin[2]};
-  const int imax[3] = {kd.imax[0], kd.imax[1], kd.imax[2]};
+  const int dir CCTK_ATTRIBUTE_UNUSED = kd.dir;
+  const int face CCTK_ATTRIBUTE_UNUSED = kd.face;
+  const int imin[3] = {std::max(kd.imin[0], kd.tile_imin[0]),
+                       std::max(kd.imin[1], kd.tile_imin[1]),
+                       std::max(kd.imin[2], kd.tile_imin[2])};
+  const int imax[3] = {std::min(kd.imax[0], kd.tile_imax[0]),
+                       std::min(kd.imax[1], kd.tile_imax[1]),
+                       std::min(kd.imax[2], kd.tile_imax[2])};
   
   /* Include user-supplied include files */
   
@@ -104,9 +109,9 @@ static void calc_rhs_Body(const cGH* restrict const cctkGH, const KrancData &kd)
   {
     const ptrdiff_t index CCTK_ATTRIBUTE_UNUSED = di*i + dj*j + dk*k;
     // ++vec_iter_counter;
-    const int ti = i - kd.tile_imin[0];
-    const int tj = j - kd.tile_imin[1];
-    const int tk = k - kd.tile_imin[2];
+    const int ti CCTK_ATTRIBUTE_UNUSED = i - kd.tile_imin[0];
+    const int tj CCTK_ATTRIBUTE_UNUSED = j - kd.tile_imin[1];
+    const int tk CCTK_ATTRIBUTE_UNUSED = k - kd.tile_imin[2];
     
     /* Assign local copies of grid functions */
     

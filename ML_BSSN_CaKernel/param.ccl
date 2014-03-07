@@ -168,6 +168,12 @@ CCTK_INT harmonicShift "Whether to use the harmonic shift"
   1 :: "Harmonic shift"
 } 0
 
+restricted:
+CCTK_INT tile_size "Loop tile size"
+{
+  *:* :: ""
+} -1
+
 private:
 KEYWORD my_initial_data "my_initial_data"
 {

@@ -36,6 +36,12 @@ CCTK_REAL hlleAlpha "hlleAlpha"
 } 0
 
 restricted:
+CCTK_INT tile_size "Loop tile size"
+{
+  *:* :: ""
+} -1
+
+restricted:
 CCTK_INT ConservationCalculation_MaxNumEvolvedVars "Number of evolved variables used by this thorn" ACCUMULATOR-BASE=MethodofLines::MoL_Num_Evolved_Vars STEERABLE=RECOVER
 {
   5:5 :: "Number of evolved variables used by this thorn"
