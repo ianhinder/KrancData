@@ -1,0 +1,4 @@
+# 1:Calculation 2:flops/gp
+
+initial_sine	12
+calc_rhs	14
