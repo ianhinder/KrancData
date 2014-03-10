@@ -10,11 +10,9 @@ extern "C" void TestSimpleWave_RegisterVars(CCTK_ARGUMENTS)
   DECLARE_CCTK_PARAMETERS;
   
   CCTK_INT ierr CCTK_ATTRIBUTE_UNUSED = 0;
-  
   /* Register all the evolved grid functions with MoL */
   ierr += MoLRegisterEvolved(CCTK_VarIndex("TestSimpleWave::phi"),  CCTK_VarIndex("TestSimpleWave::phirhs"));
   ierr += MoLRegisterEvolved(CCTK_VarIndex("TestSimpleWave::pi"),  CCTK_VarIndex("TestSimpleWave::pirhs"));
-  
   /* Register all the evolved Array functions with MoL */
   return;
 }

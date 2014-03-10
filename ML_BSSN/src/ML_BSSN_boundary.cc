@@ -71,9 +71,7 @@ static void ML_BSSN_boundary_Body(const cGH* restrict const cctkGH, const int di
   DECLARE_CCTK_ARGUMENTS;
   DECLARE_CCTK_PARAMETERS;
   
-  
   /* Include user-supplied include files */
-  
   /* Initialise finite differencing variables */
   const ptrdiff_t di CCTK_ATTRIBUTE_UNUSED = 1;
   const ptrdiff_t dj CCTK_ATTRIBUTE_UNUSED = CCTK_GFINDEX3D(cctkGH,0,1,0) - CCTK_GFINDEX3D(cctkGH,0,0,0);
@@ -102,7 +100,6 @@ static void ML_BSSN_boundary_Body(const cGH* restrict const cctkGH, const int di
     kmul(dyi,ToReal(0.5));
   const CCTK_REAL_VEC hdzi CCTK_ATTRIBUTE_UNUSED = 
     kmul(dzi,ToReal(0.5));
-  
   /* Initialize predefined quantities */
   const CCTK_REAL_VEC p1o12dx CCTK_ATTRIBUTE_UNUSED = kdiv(ToReal(0.0833333333333333333333333333333),dx);
   const CCTK_REAL_VEC p1o12dy CCTK_ATTRIBUTE_UNUSED = kdiv(ToReal(0.0833333333333333333333333333333),dy);
@@ -143,7 +140,6 @@ static void ML_BSSN_boundary_Body(const cGH* restrict const cctkGH, const int di
   const CCTK_REAL_VEC pm1o4dx CCTK_ATTRIBUTE_UNUSED = kdiv(ToReal(-0.25),dx);
   const CCTK_REAL_VEC pm1o4dy CCTK_ATTRIBUTE_UNUSED = kdiv(ToReal(-0.25),dy);
   const CCTK_REAL_VEC pm1o4dz CCTK_ATTRIBUTE_UNUSED = kdiv(ToReal(-0.25),dz);
-  
   /* Jacobian variable pointers */
   const bool use_jacobian1 = (!CCTK_IsFunctionAliased("MultiPatch_GetMap") || MultiPatch_GetMap(cctkGH) != jacobian_identity_map)
                         && strlen(jacobian_group) > 0;
@@ -210,15 +206,11 @@ static void ML_BSSN_boundary_Body(const cGH* restrict const cctkGH, const int di
   const CCTK_REAL* restrict const dJ322 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_derivative_ptrs[15] : 0;
   const CCTK_REAL* restrict const dJ323 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_derivative_ptrs[16] : 0;
   const CCTK_REAL* restrict const dJ333 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_derivative_ptrs[17] : 0;
-  
   /* Assign local copies of arrays functions */
   
   
-  
   /* Calculate temporaries and arrays functions */
-  
   /* Copy local copies back to grid functions */
-  
   /* Loop over the grid points */
   const int imin0=imin[0];
   const int imin1=imin[1];
@@ -234,14 +226,11 @@ static void ML_BSSN_boundary_Body(const cGH* restrict const cctkGH, const int di
   {
     const ptrdiff_t index CCTK_ATTRIBUTE_UNUSED = di*i + dj*j + dk*k;
     // vec_iter_counter+=CCTK_REAL_VEC_SIZE;
-    
     /* Assign local copies of grid functions */
     
     
     
-    
     /* Include user supplied include files */
-    
     /* Precompute derivatives */
     
     switch (fdOrder)
@@ -258,7 +247,6 @@ static void ML_BSSN_boundary_Body(const cGH* restrict const cctkGH, const int di
       default:
         CCTK_BUILTIN_UNREACHABLE();
     }
-    
     /* Calculate temporaries and grid functions */
     CCTK_REAL_VEC phiL CCTK_ATTRIBUTE_UNUSED = IfThen(conformalMethod == 
       1,ToReal(1),ToReal(0));
@@ -310,7 +298,6 @@ static void ML_BSSN_boundary_Body(const cGH* restrict const cctkGH, const int di
     CCTK_REAL_VEC B2L CCTK_ATTRIBUTE_UNUSED = ToReal(0);
     
     CCTK_REAL_VEC B3L CCTK_ATTRIBUTE_UNUSED = ToReal(0);
-    
     /* Copy local copies back to grid functions */
     vec_store_partial_prepare(i,vecimin,vecimax);
     vec_store_nta_partial(A[index],AL);
@@ -341,18 +328,15 @@ static void ML_BSSN_boundary_Body(const cGH* restrict const cctkGH, const int di
   }
   CCTK_ENDLOOP3STR(ML_BSSN_boundary);
 }
-
 extern "C" void ML_BSSN_boundary(CCTK_ARGUMENTS)
 {
   DECLARE_CCTK_ARGUMENTS;
   DECLARE_CCTK_PARAMETERS;
   
-  
   if (verbose > 1)
   {
     CCTK_VInfo(CCTK_THORNSTRING,"Entering ML_BSSN_boundary_Body");
   }
-  
   if (cctk_iteration % ML_BSSN_boundary_calc_every != ML_BSSN_boundary_calc_offset)
   {
     return;
@@ -386,7 +370,6 @@ extern "C" void ML_BSSN_boundary(CCTK_ARGUMENTS)
   }
   
   GenericFD_LoopOverBoundaryWithGhosts(cctkGH, ML_BSSN_boundary_Body);
-  
   if (verbose > 1)
   {
     CCTK_VInfo(CCTK_THORNSTRING,"Leaving ML_BSSN_boundary_Body");

@@ -42,9 +42,7 @@ static void calc_rhs_Body(const cGH* restrict const cctkGH, const int dir, const
   DECLARE_CCTK_ARGUMENTS;
   DECLARE_CCTK_PARAMETERS;
   
-  
   /* Include user-supplied include files */
-  
   /* Initialise finite differencing variables */
   const ptrdiff_t di CCTK_ATTRIBUTE_UNUSED = 1;
   const ptrdiff_t dj CCTK_ATTRIBUTE_UNUSED = CCTK_GFINDEX3D(cctkGH,0,1,0) - CCTK_GFINDEX3D(cctkGH,0,0,0);
@@ -70,7 +68,6 @@ static void calc_rhs_Body(const cGH* restrict const cctkGH, const int dir, const
   const CCTK_REAL hdxi CCTK_ATTRIBUTE_UNUSED = 0.5*dxi;
   const CCTK_REAL hdyi CCTK_ATTRIBUTE_UNUSED = 0.5*dyi;
   const CCTK_REAL hdzi CCTK_ATTRIBUTE_UNUSED = 0.5*dzi;
-  
   /* Initialize predefined quantities */
   const CCTK_REAL p1o2dx CCTK_ATTRIBUTE_UNUSED = 0.5*INV(dx);
   const CCTK_REAL p1o2dy CCTK_ATTRIBUTE_UNUSED = 0.5*INV(dy);
@@ -78,15 +75,11 @@ static void calc_rhs_Body(const cGH* restrict const cctkGH, const int dir, const
   const CCTK_REAL p1odx2 CCTK_ATTRIBUTE_UNUSED = INV(SQR(dx));
   const CCTK_REAL p1ody2 CCTK_ATTRIBUTE_UNUSED = INV(SQR(dy));
   const CCTK_REAL p1odz2 CCTK_ATTRIBUTE_UNUSED = INV(SQR(dz));
-  
   /* Assign local copies of arrays functions */
   
   
-  
   /* Calculate temporaries and arrays functions */
-  
   /* Copy local copies back to grid functions */
-  
   /* Loop over the grid points */
   const int imin0=imin[0];
   const int imin1=imin[1];
@@ -101,44 +94,36 @@ static void calc_rhs_Body(const cGH* restrict const cctkGH, const int dir, const
   {
     const ptrdiff_t index CCTK_ATTRIBUTE_UNUSED = di*i + dj*j + dk*k;
     // ++vec_iter_counter;
-    
     /* Assign local copies of grid functions */
     
     CCTK_REAL phiL CCTK_ATTRIBUTE_UNUSED = phi[index];
     CCTK_REAL piL CCTK_ATTRIBUTE_UNUSED = pi[index];
     
-    
     /* Include user supplied include files */
-    
     /* Precompute derivatives */
     const CCTK_REAL PDstandard2nd11phi CCTK_ATTRIBUTE_UNUSED = PDstandard2nd11(&phi[index]);
     const CCTK_REAL PDstandard2nd22phi CCTK_ATTRIBUTE_UNUSED = PDstandard2nd22(&phi[index]);
     const CCTK_REAL PDstandard2nd33phi CCTK_ATTRIBUTE_UNUSED = PDstandard2nd33(&phi[index]);
-    
     /* Calculate temporaries and grid functions */
     CCTK_REAL phirhsL CCTK_ATTRIBUTE_UNUSED = piL;
     
     CCTK_REAL pirhsL CCTK_ATTRIBUTE_UNUSED = PDstandard2nd11phi + 
       PDstandard2nd22phi + PDstandard2nd33phi;
-    
     /* Copy local copies back to grid functions */
     phirhs[index] = phirhsL;
     pirhs[index] = pirhsL;
   }
   CCTK_ENDLOOP3(calc_rhs);
 }
-
 extern "C" void calc_rhs(CCTK_ARGUMENTS)
 {
   DECLARE_CCTK_ARGUMENTS;
   DECLARE_CCTK_PARAMETERS;
   
-  
   if (verbose > 1)
   {
     CCTK_VInfo(CCTK_THORNSTRING,"Entering calc_rhs_Body");
   }
-  
   if (cctk_iteration % calc_rhs_calc_every != calc_rhs_calc_offset)
   {
     return;
@@ -152,7 +137,6 @@ extern "C" void calc_rhs(CCTK_ARGUMENTS)
   GenericFD_EnsureStencilFits(cctkGH, "calc_rhs", 1, 1, 1);
   
   GenericFD_LoopOverInterior(cctkGH, calc_rhs_Body);
-  
   if (verbose > 1)
   {
     CCTK_VInfo(CCTK_THORNSTRING,"Leaving calc_rhs_Body");

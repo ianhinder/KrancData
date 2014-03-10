@@ -1,6 +1,5 @@
 # File produced by Kranc
 
-
 STORAGE: ML_log_confac[timelevels]
 
 STORAGE: ML_metric[timelevels]
@@ -46,7 +45,6 @@ STORAGE: ML_metricrhs[rhs_timelevels]
 STORAGE: ML_shiftrhs[rhs_timelevels]
 
 STORAGE: ML_trace_curvrhs[rhs_timelevels]
-
 schedule ML_BSSN_OpenCL_Startup at STARTUP
 {
   LANG: C
@@ -58,7 +56,6 @@ schedule ML_BSSN_OpenCL_RegisterSymmetries in SymmetryRegister
   LANG: C
   OPTIONS: meta
 } "register symmetries"
-
 
 if (CCTK_EQUALS(my_initial_data, "ADMBase"))
 {
@@ -208,7 +205,6 @@ schedule ML_BSSN_OpenCL_RHS2 IN ML_BSSN_OpenCL_evolCalcGroup
   WRITES: ML_BSSN_OpenCL::At33rhs(Interior)
 } "ML_BSSN_OpenCL_RHS2"
 
-
 if (CCTK_EQUALS(my_rhs_boundary_condition, "static"))
 {
   schedule ML_BSSN_OpenCL_RHSStaticBoundary IN MoL_CalcRHS
@@ -268,7 +264,6 @@ schedule ML_BSSN_OpenCL_enforce IN MoL_PostStepModify
   WRITES: ML_BSSN_OpenCL::At23(Everywhere)
   WRITES: ML_BSSN_OpenCL::At33(Everywhere)
 } "ML_BSSN_OpenCL_enforce"
-
 
 if (CCTK_EQUALS(my_boundary_condition, "Minkowski"))
 {
@@ -391,7 +386,6 @@ schedule ML_BSSN_OpenCL_RegisterVars in MoL_Register
   LANG: C
   OPTIONS: meta
 } "Register Variables for MoL"
-
 schedule group ApplyBCs as ML_BSSN_OpenCL_ApplyBCs in MoL_PostStep after ML_BSSN_OpenCL_SelectBoundConds
 {
 } "Apply boundary conditions controlled by thorn Boundary"

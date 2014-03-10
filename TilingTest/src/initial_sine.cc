@@ -23,6 +23,7 @@
 #define CUB(x) ((x) * SQR(x))
 #define QAD(x) (SQR(SQR(x)))
 
+
 static void initial_sine_Body(const cGH* restrict const cctkGH, const KrancData & restrict kd)
 {
   DECLARE_CCTK_ARGUMENTS;
@@ -36,9 +37,7 @@ static void initial_sine_Body(const cGH* restrict const cctkGH, const KrancData 
   const int imax[3] = {std::min(kd.imax[0], kd.tile_imax[0]),
                        std::min(kd.imax[1], kd.tile_imax[1]),
                        std::min(kd.imax[2], kd.tile_imax[2])};
-  
   /* Include user-supplied include files */
-  
   /* Initialise finite differencing variables */
   const ptrdiff_t di CCTK_ATTRIBUTE_UNUSED = 1;
   const ptrdiff_t dj CCTK_ATTRIBUTE_UNUSED = CCTK_GFINDEX3D(cctkGH,0,1,0) - CCTK_GFINDEX3D(cctkGH,0,0,0);
@@ -64,7 +63,6 @@ static void initial_sine_Body(const cGH* restrict const cctkGH, const KrancData 
   const CCTK_REAL hdxi CCTK_ATTRIBUTE_UNUSED = 0.5*dxi;
   const CCTK_REAL hdyi CCTK_ATTRIBUTE_UNUSED = 0.5*dyi;
   const CCTK_REAL hdzi CCTK_ATTRIBUTE_UNUSED = 0.5*dzi;
-  
   /* Initialize predefined quantities */
   const CCTK_REAL p1o2dx CCTK_ATTRIBUTE_UNUSED = 0.5*INV(dx);
   const CCTK_REAL p1o2dy CCTK_ATTRIBUTE_UNUSED = 0.5*INV(dy);
@@ -72,15 +70,11 @@ static void initial_sine_Body(const cGH* restrict const cctkGH, const KrancData 
   const CCTK_REAL p1odx2 CCTK_ATTRIBUTE_UNUSED = INV(SQR(dx));
   const CCTK_REAL p1ody2 CCTK_ATTRIBUTE_UNUSED = INV(SQR(dy));
   const CCTK_REAL p1odz2 CCTK_ATTRIBUTE_UNUSED = INV(SQR(dz));
-  
   /* Assign local copies of arrays functions */
   
   
-  
   /* Calculate temporaries and arrays functions */
-  
   /* Copy local copies back to grid functions */
-  
   /* Loop over the grid points */
   const int imin0=imin[0];
   const int imin1=imin[1];
@@ -98,39 +92,31 @@ static void initial_sine_Body(const cGH* restrict const cctkGH, const KrancData 
     const int ti CCTK_ATTRIBUTE_UNUSED = i - kd.tile_imin[0];
     const int tj CCTK_ATTRIBUTE_UNUSED = j - kd.tile_imin[1];
     const int tk CCTK_ATTRIBUTE_UNUSED = k - kd.tile_imin[2];
-    
     /* Assign local copies of grid functions */
     
     CCTK_REAL xL CCTK_ATTRIBUTE_UNUSED = x[index];
     
-    
     /* Include user supplied include files */
-    
     /* Precompute derivatives */
-    
     /* Calculate temporaries and grid functions */
     CCTK_REAL phiL CCTK_ATTRIBUTE_UNUSED = sin(2*Pi*(xL - t));
     
     CCTK_REAL piL CCTK_ATTRIBUTE_UNUSED = -2*Pi*cos(2*Pi*(xL - t));
-    
     /* Copy local copies back to grid functions */
     phi[index] = phiL;
     pi[index] = piL;
   }
   CCTK_ENDLOOP3(initial_sine);
 }
-
 extern "C" void initial_sine(CCTK_ARGUMENTS)
 {
   DECLARE_CCTK_ARGUMENTS;
   DECLARE_CCTK_PARAMETERS;
   
-  
   if (verbose > 1)
   {
     CCTK_VInfo(CCTK_THORNSTRING,"Entering initial_sine_Body");
   }
-  
   if (cctk_iteration % initial_sine_calc_every != initial_sine_calc_offset)
   {
     return;
@@ -143,7 +129,6 @@ extern "C" void initial_sine(CCTK_ARGUMENTS)
   
   
   TilingTest_TiledLoopOverEverything(cctkGH, initial_sine_Body);
-  
   if (verbose > 1)
   {
     CCTK_VInfo(CCTK_THORNSTRING,"Leaving initial_sine_Body");

@@ -49,9 +49,7 @@ static void ML_BSSN_OpenCL_constraints1_Body(const cGH* restrict const cctkGH, c
   DECLARE_CCTK_PARAMETERS;
   
   const char* const source =
-  "\n"
   "/* Include user-supplied include files */\n"
-  "\n"
   "/* Initialise finite differencing variables */\n"
   "const ptrdiff_t di CCTK_ATTRIBUTE_UNUSED = 1;\n"
   "const ptrdiff_t dj CCTK_ATTRIBUTE_UNUSED = CCTK_GFINDEX3D(cctkGH,0,1,0) - CCTK_GFINDEX3D(cctkGH,0,0,0);\n"
@@ -80,7 +78,6 @@ static void ML_BSSN_OpenCL_constraints1_Body(const cGH* restrict const cctkGH, c
   "  kmul(dyi,ToReal(0.5));\n"
   "const CCTK_REAL_VEC hdzi CCTK_ATTRIBUTE_UNUSED = \n"
   "  kmul(dzi,ToReal(0.5));\n"
-  "\n"
   "/* Initialize predefined quantities */\n"
   "const CCTK_REAL_VEC p1o12dx CCTK_ATTRIBUTE_UNUSED = kdiv(ToReal(0.0833333333333333333333333333333),dx);\n"
   "const CCTK_REAL_VEC p1o12dy CCTK_ATTRIBUTE_UNUSED = kdiv(ToReal(0.0833333333333333333333333333333),dy);\n"
@@ -121,7 +118,6 @@ static void ML_BSSN_OpenCL_constraints1_Body(const cGH* restrict const cctkGH, c
   "const CCTK_REAL_VEC pm1o4dx CCTK_ATTRIBUTE_UNUSED = kdiv(ToReal(-0.25),dx);\n"
   "const CCTK_REAL_VEC pm1o4dy CCTK_ATTRIBUTE_UNUSED = kdiv(ToReal(-0.25),dy);\n"
   "const CCTK_REAL_VEC pm1o4dz CCTK_ATTRIBUTE_UNUSED = kdiv(ToReal(-0.25),dz);\n"
-  "\n"
   "/* Jacobian variable pointers */\n"
   "const bool use_jacobian1 = (!CCTK_IsFunctionAliased(\"MultiPatch_GetMap\") || MultiPatch_GetMap(cctkGH) != jacobian_identity_map)\n"
   "                      && strlen(jacobian_group) > 0;\n"
@@ -188,15 +184,11 @@ static void ML_BSSN_OpenCL_constraints1_Body(const cGH* restrict const cctkGH, c
   "const CCTK_REAL* restrict const dJ322 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_derivative_ptrs[15] : 0;\n"
   "const CCTK_REAL* restrict const dJ323 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_derivative_ptrs[16] : 0;\n"
   "const CCTK_REAL* restrict const dJ333 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_derivative_ptrs[17] : 0;\n"
-  "\n"
   "/* Assign local copies of arrays functions */\n"
   "\n"
   "\n"
-  "\n"
   "/* Calculate temporaries and arrays functions */\n"
-  "\n"
   "/* Copy local copies back to grid functions */\n"
-  "\n"
   "/* Loop over the grid points */\n"
   "const int imin0=imin[0];\n"
   "const int imin1=imin[1];\n"
@@ -212,7 +204,6 @@ static void ML_BSSN_OpenCL_constraints1_Body(const cGH* restrict const cctkGH, c
   "{\n"
   "  const ptrdiff_t index CCTK_ATTRIBUTE_UNUSED = di*i + dj*j + dk*k;\n"
   "  // vec_iter_counter+=CCTK_REAL_VEC_SIZE;\n"
-  "  \n"
   "  /* Assign local copies of grid functions */\n"
   "  \n"
   "  CCTK_REAL_VEC alphaL CCTK_ATTRIBUTE_UNUSED = vec_load(alpha[index]);\n"
@@ -298,9 +289,7 @@ static void ML_BSSN_OpenCL_constraints1_Body(const cGH* restrict const cctkGH, c
   "    J32L = vec_load(J32[index]);\n"
   "    J33L = vec_load(J33[index]);\n"
   "  }\n"
-  "  \n"
   "  /* Include user supplied include files */\n"
-  "  \n"
   "  /* Precompute derivatives */\n"
   "  CCTK_REAL_VEC PDstandardNth1gt11 CCTK_ATTRIBUTE_UNUSED;\n"
   "  CCTK_REAL_VEC PDstandardNth2gt11 CCTK_ATTRIBUTE_UNUSED;\n"
@@ -533,7 +522,6 @@ static void ML_BSSN_OpenCL_constraints1_Body(const cGH* restrict const cctkGH, c
   "    default:\n"
   "      CCTK_BUILTIN_UNREACHABLE();\n"
   "  }\n"
-  "  \n"
   "  /* Calculate temporaries and grid functions */\n"
   "  CCTK_REAL_VEC JacPDstandardNth11gt11 CCTK_ATTRIBUTE_UNUSED;\n"
   "  CCTK_REAL_VEC JacPDstandardNth11gt12 CCTK_ATTRIBUTE_UNUSED;\n"
@@ -1432,7 +1420,6 @@ static void ML_BSSN_OpenCL_constraints1_Body(const cGH* restrict const cctkGH, c
   "  \n"
   "  CCTK_REAL_VEC HL CCTK_ATTRIBUTE_UNUSED = \n"
   "    kadd(trR,kmadd(Atm12,kmul(Atm21,ToReal(-2)),kmadd(Atm13,kmul(Atm31,ToReal(-2)),kmadd(Atm23,kmul(Atm32,ToReal(-2)),knmsub(Atm11,Atm11,knmsub(Atm22,Atm22,knmsub(Atm33,Atm33,kmadd(kmul(trKL,trKL),ToReal(0.666666666666666666666666666667),kmul(rho,ToReal(-50.2654824574366918154022941325))))))))));\n"
-  "  \n"
   "  /* Copy local copies back to grid functions */\n"
   "  vec_store_partial_prepare(i,lc_imin,lc_imax);\n"
   "  vec_store_nta_partial(H[index],HL);\n"
@@ -1459,18 +1446,15 @@ static void ML_BSSN_OpenCL_constraints1_Body(const cGH* restrict const cctkGH, c
                            imin, imax, &kernel);
   
 }
-
 extern "C" void ML_BSSN_OpenCL_constraints1(CCTK_ARGUMENTS)
 {
   DECLARE_CCTK_ARGUMENTS;
   DECLARE_CCTK_PARAMETERS;
   
-  
   if (verbose > 1)
   {
     CCTK_VInfo(CCTK_THORNSTRING,"Entering ML_BSSN_OpenCL_constraints1_Body");
   }
-  
   if (cctk_iteration % ML_BSSN_OpenCL_constraints1_calc_every != ML_BSSN_OpenCL_constraints1_calc_offset)
   {
     return;
@@ -1505,7 +1489,6 @@ extern "C" void ML_BSSN_OpenCL_constraints1(CCTK_ARGUMENTS)
   }
   
   GenericFD_LoopOverInterior(cctkGH, ML_BSSN_OpenCL_constraints1_Body);
-  
   if (verbose > 1)
   {
     CCTK_VInfo(CCTK_THORNSTRING,"Leaving ML_BSSN_OpenCL_constraints1_Body");

@@ -1,6 +1,5 @@
 # File produced by Kranc
 
-
 schedule CreateThorn_Startup at STARTUP
 {
   LANG: C
@@ -30,7 +29,6 @@ schedule CreateThorn_RegisterVars in MoL_Register
   LANG: C
   OPTIONS: meta
 } "Register Variables for MoL"
-
 schedule group ApplyBCs as CreateThorn_ApplyBCs in MoL_PostStep after CreateThorn_SelectBoundConds
 {
 } "Apply boundary conditions controlled by thorn Boundary"

@@ -23,14 +23,13 @@
 #define CUB(x) ((x) * SQR(x))
 #define QAD(x) (SQR(SQR(x)))
 
+
 static void ML_BSSN_NoVec_enforce_Body(const cGH* restrict const cctkGH, const int dir, const int face, const CCTK_REAL normal[3], const CCTK_REAL tangentA[3], const CCTK_REAL tangentB[3], const int imin[3], const int imax[3], const int n_subblock_gfs, CCTK_REAL* restrict const subblock_gfs[])
 {
   DECLARE_CCTK_ARGUMENTS;
   DECLARE_CCTK_PARAMETERS;
   
-  
   /* Include user-supplied include files */
-  
   /* Initialise finite differencing variables */
   const ptrdiff_t di CCTK_ATTRIBUTE_UNUSED = 1;
   const ptrdiff_t dj CCTK_ATTRIBUTE_UNUSED = CCTK_GFINDEX3D(cctkGH,0,1,0) - CCTK_GFINDEX3D(cctkGH,0,0,0);
@@ -56,7 +55,6 @@ static void ML_BSSN_NoVec_enforce_Body(const cGH* restrict const cctkGH, const i
   const CCTK_REAL hdxi CCTK_ATTRIBUTE_UNUSED = 0.5*dxi;
   const CCTK_REAL hdyi CCTK_ATTRIBUTE_UNUSED = 0.5*dyi;
   const CCTK_REAL hdzi CCTK_ATTRIBUTE_UNUSED = 0.5*dzi;
-  
   /* Initialize predefined quantities */
   const CCTK_REAL p1o12dx CCTK_ATTRIBUTE_UNUSED = 0.0833333333333333333333333333333*INV(dx);
   const CCTK_REAL p1o12dy CCTK_ATTRIBUTE_UNUSED = 0.0833333333333333333333333333333*INV(dy);
@@ -97,7 +95,6 @@ static void ML_BSSN_NoVec_enforce_Body(const cGH* restrict const cctkGH, const i
   const CCTK_REAL pm1o4dx CCTK_ATTRIBUTE_UNUSED = -0.25*INV(dx);
   const CCTK_REAL pm1o4dy CCTK_ATTRIBUTE_UNUSED = -0.25*INV(dy);
   const CCTK_REAL pm1o4dz CCTK_ATTRIBUTE_UNUSED = -0.25*INV(dz);
-  
   /* Jacobian variable pointers */
   const bool use_jacobian1 = (!CCTK_IsFunctionAliased("MultiPatch_GetMap") || MultiPatch_GetMap(cctkGH) != jacobian_identity_map)
                         && strlen(jacobian_group) > 0;
@@ -164,15 +161,11 @@ static void ML_BSSN_NoVec_enforce_Body(const cGH* restrict const cctkGH, const i
   const CCTK_REAL* restrict const dJ322 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_derivative_ptrs[15] : 0;
   const CCTK_REAL* restrict const dJ323 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_derivative_ptrs[16] : 0;
   const CCTK_REAL* restrict const dJ333 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_derivative_ptrs[17] : 0;
-  
   /* Assign local copies of arrays functions */
   
   
-  
   /* Calculate temporaries and arrays functions */
-  
   /* Copy local copies back to grid functions */
-  
   /* Loop over the grid points */
   const int imin0=imin[0];
   const int imin1=imin[1];
@@ -187,7 +180,6 @@ static void ML_BSSN_NoVec_enforce_Body(const cGH* restrict const cctkGH, const i
   {
     const ptrdiff_t index CCTK_ATTRIBUTE_UNUSED = di*i + dj*j + dk*k;
     // ++vec_iter_counter;
-    
     /* Assign local copies of grid functions */
     
     CCTK_REAL alphaL CCTK_ATTRIBUTE_UNUSED = alpha[index];
@@ -205,9 +197,7 @@ static void ML_BSSN_NoVec_enforce_Body(const cGH* restrict const cctkGH, const i
     CCTK_REAL gt33L CCTK_ATTRIBUTE_UNUSED = gt33[index];
     
     
-    
     /* Include user supplied include files */
-    
     /* Precompute derivatives */
     
     switch (fdOrder)
@@ -224,7 +214,6 @@ static void ML_BSSN_NoVec_enforce_Body(const cGH* restrict const cctkGH, const i
       default:
         CCTK_BUILTIN_UNREACHABLE();
     }
-    
     /* Calculate temporaries and grid functions */
     CCTK_REAL detgt CCTK_ATTRIBUTE_UNUSED = 1;
     
@@ -262,7 +251,6 @@ static void ML_BSSN_NoVec_enforce_Body(const cGH* restrict const cctkGH, const i
     At33L = At33L - 0.333333333333333333333333333333*gt33L*trAt;
     
     alphaL = fmax(alphaL,ToReal(MinimumLapse));
-    
     /* Copy local copies back to grid functions */
     alpha[index] = alphaL;
     At11[index] = At11L;
@@ -274,18 +262,15 @@ static void ML_BSSN_NoVec_enforce_Body(const cGH* restrict const cctkGH, const i
   }
   CCTK_ENDLOOP3(ML_BSSN_NoVec_enforce);
 }
-
 extern "C" void ML_BSSN_NoVec_enforce(CCTK_ARGUMENTS)
 {
   DECLARE_CCTK_ARGUMENTS;
   DECLARE_CCTK_PARAMETERS;
   
-  
   if (verbose > 1)
   {
     CCTK_VInfo(CCTK_THORNSTRING,"Entering ML_BSSN_NoVec_enforce_Body");
   }
-  
   if (cctk_iteration % ML_BSSN_NoVec_enforce_calc_every != ML_BSSN_NoVec_enforce_calc_offset)
   {
     return;
@@ -313,7 +298,6 @@ extern "C" void ML_BSSN_NoVec_enforce(CCTK_ARGUMENTS)
   }
   
   GenericFD_LoopOverEverything(cctkGH, ML_BSSN_NoVec_enforce_Body);
-  
   if (verbose > 1)
   {
     CCTK_VInfo(CCTK_THORNSTRING,"Leaving ML_BSSN_NoVec_enforce_Body");

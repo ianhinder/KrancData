@@ -1,6 +1,5 @@
 # File produced by Kranc
 
-
 STORAGE: Den_group[timelevels]
 
 STORAGE: S_group[timelevels]
@@ -48,7 +47,6 @@ STORAGE: Den_grouprhs[rhs_timelevels]
 STORAGE: En_grouprhs[rhs_timelevels]
 
 STORAGE: S_grouprhs[rhs_timelevels]
-
 schedule ConservationCalculation_Startup at STARTUP
 {
   LANG: C
@@ -568,7 +566,6 @@ schedule ConservationCalculation_RegisterVars in MoL_Register
   LANG: C
   OPTIONS: meta
 } "Register Variables for MoL"
-
 schedule group ApplyBCs as ConservationCalculation_ApplyBCs in MoL_PostStep after ConservationCalculation_SelectBoundConds
 {
 } "Apply boundary conditions controlled by thorn Boundary"

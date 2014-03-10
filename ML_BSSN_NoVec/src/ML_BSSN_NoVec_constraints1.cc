@@ -42,9 +42,7 @@ static void ML_BSSN_NoVec_constraints1_Body(const cGH* restrict const cctkGH, co
   DECLARE_CCTK_ARGUMENTS;
   DECLARE_CCTK_PARAMETERS;
   
-  
   /* Include user-supplied include files */
-  
   /* Initialise finite differencing variables */
   const ptrdiff_t di CCTK_ATTRIBUTE_UNUSED = 1;
   const ptrdiff_t dj CCTK_ATTRIBUTE_UNUSED = CCTK_GFINDEX3D(cctkGH,0,1,0) - CCTK_GFINDEX3D(cctkGH,0,0,0);
@@ -70,7 +68,6 @@ static void ML_BSSN_NoVec_constraints1_Body(const cGH* restrict const cctkGH, co
   const CCTK_REAL hdxi CCTK_ATTRIBUTE_UNUSED = 0.5*dxi;
   const CCTK_REAL hdyi CCTK_ATTRIBUTE_UNUSED = 0.5*dyi;
   const CCTK_REAL hdzi CCTK_ATTRIBUTE_UNUSED = 0.5*dzi;
-  
   /* Initialize predefined quantities */
   const CCTK_REAL p1o12dx CCTK_ATTRIBUTE_UNUSED = 0.0833333333333333333333333333333*INV(dx);
   const CCTK_REAL p1o12dy CCTK_ATTRIBUTE_UNUSED = 0.0833333333333333333333333333333*INV(dy);
@@ -111,7 +108,6 @@ static void ML_BSSN_NoVec_constraints1_Body(const cGH* restrict const cctkGH, co
   const CCTK_REAL pm1o4dx CCTK_ATTRIBUTE_UNUSED = -0.25*INV(dx);
   const CCTK_REAL pm1o4dy CCTK_ATTRIBUTE_UNUSED = -0.25*INV(dy);
   const CCTK_REAL pm1o4dz CCTK_ATTRIBUTE_UNUSED = -0.25*INV(dz);
-  
   /* Jacobian variable pointers */
   const bool use_jacobian1 = (!CCTK_IsFunctionAliased("MultiPatch_GetMap") || MultiPatch_GetMap(cctkGH) != jacobian_identity_map)
                         && strlen(jacobian_group) > 0;
@@ -178,15 +174,11 @@ static void ML_BSSN_NoVec_constraints1_Body(const cGH* restrict const cctkGH, co
   const CCTK_REAL* restrict const dJ322 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_derivative_ptrs[15] : 0;
   const CCTK_REAL* restrict const dJ323 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_derivative_ptrs[16] : 0;
   const CCTK_REAL* restrict const dJ333 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_derivative_ptrs[17] : 0;
-  
   /* Assign local copies of arrays functions */
   
   
-  
   /* Calculate temporaries and arrays functions */
-  
   /* Copy local copies back to grid functions */
-  
   /* Loop over the grid points */
   const int imin0=imin[0];
   const int imin1=imin[1];
@@ -201,7 +193,6 @@ static void ML_BSSN_NoVec_constraints1_Body(const cGH* restrict const cctkGH, co
   {
     const ptrdiff_t index CCTK_ATTRIBUTE_UNUSED = di*i + dj*j + dk*k;
     // ++vec_iter_counter;
-    
     /* Assign local copies of grid functions */
     
     CCTK_REAL alphaL CCTK_ATTRIBUTE_UNUSED = alpha[index];
@@ -287,9 +278,7 @@ static void ML_BSSN_NoVec_constraints1_Body(const cGH* restrict const cctkGH, co
       J32L = J32[index];
       J33L = J33[index];
     }
-    
     /* Include user supplied include files */
-    
     /* Precompute derivatives */
     CCTK_REAL PDstandardNth1gt11 CCTK_ATTRIBUTE_UNUSED;
     CCTK_REAL PDstandardNth2gt11 CCTK_ATTRIBUTE_UNUSED;
@@ -522,7 +511,6 @@ static void ML_BSSN_NoVec_constraints1_Body(const cGH* restrict const cctkGH, co
       default:
         CCTK_BUILTIN_UNREACHABLE();
     }
-    
     /* Calculate temporaries and grid functions */
     CCTK_REAL JacPDstandardNth11gt11 CCTK_ATTRIBUTE_UNUSED;
     CCTK_REAL JacPDstandardNth11gt12 CCTK_ATTRIBUTE_UNUSED;
@@ -1776,24 +1764,20 @@ static void ML_BSSN_NoVec_constraints1_Body(const cGH* restrict const cctkGH, co
       2*Atm23*Atm32 - 16*Pi*rho + trR + 
       0.666666666666666666666666666667*SQR(trKL) - SQR(Atm11) - SQR(Atm22) - 
       SQR(Atm33);
-    
     /* Copy local copies back to grid functions */
     H[index] = HL;
   }
   CCTK_ENDLOOP3(ML_BSSN_NoVec_constraints1);
 }
-
 extern "C" void ML_BSSN_NoVec_constraints1(CCTK_ARGUMENTS)
 {
   DECLARE_CCTK_ARGUMENTS;
   DECLARE_CCTK_PARAMETERS;
   
-  
   if (verbose > 1)
   {
     CCTK_VInfo(CCTK_THORNSTRING,"Entering ML_BSSN_NoVec_constraints1_Body");
   }
-  
   if (cctk_iteration % ML_BSSN_NoVec_constraints1_calc_every != ML_BSSN_NoVec_constraints1_calc_offset)
   {
     return;
@@ -1828,7 +1812,6 @@ extern "C" void ML_BSSN_NoVec_constraints1(CCTK_ARGUMENTS)
   }
   
   GenericFD_LoopOverInterior(cctkGH, ML_BSSN_NoVec_constraints1_Body);
-  
   if (verbose > 1)
   {
     CCTK_VInfo(CCTK_THORNSTRING,"Leaving ML_BSSN_NoVec_constraints1_Body");

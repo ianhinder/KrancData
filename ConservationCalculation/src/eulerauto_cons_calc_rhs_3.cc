@@ -48,9 +48,7 @@ static void eulerauto_cons_calc_rhs_3_Body(const cGH* restrict const cctkGH, con
   DECLARE_CCTK_ARGUMENTS;
   DECLARE_CCTK_PARAMETERS;
   
-  
   /* Include user-supplied include files */
-  
   /* Initialise finite differencing variables */
   const ptrdiff_t di CCTK_ATTRIBUTE_UNUSED = 1;
   const ptrdiff_t dj CCTK_ATTRIBUTE_UNUSED = CCTK_GFINDEX3D(cctkGH,0,1,0) - CCTK_GFINDEX3D(cctkGH,0,0,0);
@@ -76,21 +74,16 @@ static void eulerauto_cons_calc_rhs_3_Body(const cGH* restrict const cctkGH, con
   const CCTK_REAL hdxi CCTK_ATTRIBUTE_UNUSED = 0.5*dxi;
   const CCTK_REAL hdyi CCTK_ATTRIBUTE_UNUSED = 0.5*dyi;
   const CCTK_REAL hdzi CCTK_ATTRIBUTE_UNUSED = 0.5*dzi;
-  
   /* Initialize predefined quantities */
   const CCTK_REAL p1o1 CCTK_ATTRIBUTE_UNUSED = 1;
   const CCTK_REAL p1odx CCTK_ATTRIBUTE_UNUSED = INV(dx);
   const CCTK_REAL p1ody CCTK_ATTRIBUTE_UNUSED = INV(dy);
   const CCTK_REAL p1odz CCTK_ATTRIBUTE_UNUSED = INV(dz);
-  
   /* Assign local copies of arrays functions */
   
   
-  
   /* Calculate temporaries and arrays functions */
-  
   /* Copy local copies back to grid functions */
-  
   /* Loop over the grid points */
   const int imin0=imin[0];
   const int imin1=imin[1];
@@ -105,7 +98,6 @@ static void eulerauto_cons_calc_rhs_3_Body(const cGH* restrict const cctkGH, con
   {
     const ptrdiff_t index CCTK_ATTRIBUTE_UNUSED = di*i + dj*j + dk*k;
     // ++vec_iter_counter;
-    
     /* Assign local copies of grid functions */
     
     CCTK_REAL DenFluxL CCTK_ATTRIBUTE_UNUSED = DenFlux[index];
@@ -119,16 +111,13 @@ static void eulerauto_cons_calc_rhs_3_Body(const cGH* restrict const cctkGH, con
     CCTK_REAL S3FluxL CCTK_ATTRIBUTE_UNUSED = S3Flux[index];
     CCTK_REAL S3rhsL CCTK_ATTRIBUTE_UNUSED = S3rhs[index];
     
-    
     /* Include user supplied include files */
-    
     /* Precompute derivatives */
     const CCTK_REAL PDplus3DenFlux CCTK_ATTRIBUTE_UNUSED = PDplus3(&DenFlux[index]);
     const CCTK_REAL PDplus3EnFlux CCTK_ATTRIBUTE_UNUSED = PDplus3(&EnFlux[index]);
     const CCTK_REAL PDplus3S1Flux CCTK_ATTRIBUTE_UNUSED = PDplus3(&S1Flux[index]);
     const CCTK_REAL PDplus3S2Flux CCTK_ATTRIBUTE_UNUSED = PDplus3(&S2Flux[index]);
     const CCTK_REAL PDplus3S3Flux CCTK_ATTRIBUTE_UNUSED = PDplus3(&S3Flux[index]);
-    
     /* Calculate temporaries and grid functions */
     DenrhsL = DenrhsL - PDplus3DenFlux;
     
@@ -139,7 +128,6 @@ static void eulerauto_cons_calc_rhs_3_Body(const cGH* restrict const cctkGH, con
     S2rhsL = S2rhsL - PDplus3S2Flux;
     
     S3rhsL = S3rhsL - PDplus3S3Flux;
-    
     /* Copy local copies back to grid functions */
     Denrhs[index] = DenrhsL;
     Enrhs[index] = EnrhsL;
@@ -149,18 +137,15 @@ static void eulerauto_cons_calc_rhs_3_Body(const cGH* restrict const cctkGH, con
   }
   CCTK_ENDLOOP3(eulerauto_cons_calc_rhs_3);
 }
-
 extern "C" void eulerauto_cons_calc_rhs_3(CCTK_ARGUMENTS)
 {
   DECLARE_CCTK_ARGUMENTS;
   DECLARE_CCTK_PARAMETERS;
   
-  
   if (verbose > 1)
   {
     CCTK_VInfo(CCTK_THORNSTRING,"Entering eulerauto_cons_calc_rhs_3_Body");
   }
-  
   if (cctk_iteration % eulerauto_cons_calc_rhs_3_calc_every != eulerauto_cons_calc_rhs_3_calc_offset)
   {
     return;
@@ -180,7 +165,6 @@ extern "C" void eulerauto_cons_calc_rhs_3(CCTK_ARGUMENTS)
   GenericFD_EnsureStencilFits(cctkGH, "eulerauto_cons_calc_rhs_3", 1, 1, 1);
   
   GenericFD_LoopOverInterior(cctkGH, eulerauto_cons_calc_rhs_3_Body);
-  
   if (verbose > 1)
   {
     CCTK_VInfo(CCTK_THORNSTRING,"Leaving eulerauto_cons_calc_rhs_3_Body");

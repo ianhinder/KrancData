@@ -23,14 +23,13 @@
 #define CUB(x) ((x) * SQR(x))
 #define QAD(x) (SQR(SQR(x)))
 
+
 static void eulerauto_cons_calc_conserved_Body(const cGH* restrict const cctkGH, const int dir, const int face, const CCTK_REAL normal[3], const CCTK_REAL tangentA[3], const CCTK_REAL tangentB[3], const int imin[3], const int imax[3], const int n_subblock_gfs, CCTK_REAL* restrict const subblock_gfs[])
 {
   DECLARE_CCTK_ARGUMENTS;
   DECLARE_CCTK_PARAMETERS;
   
-  
   /* Include user-supplied include files */
-  
   /* Initialise finite differencing variables */
   const ptrdiff_t di CCTK_ATTRIBUTE_UNUSED = 1;
   const ptrdiff_t dj CCTK_ATTRIBUTE_UNUSED = CCTK_GFINDEX3D(cctkGH,0,1,0) - CCTK_GFINDEX3D(cctkGH,0,0,0);
@@ -56,21 +55,16 @@ static void eulerauto_cons_calc_conserved_Body(const cGH* restrict const cctkGH,
   const CCTK_REAL hdxi CCTK_ATTRIBUTE_UNUSED = 0.5*dxi;
   const CCTK_REAL hdyi CCTK_ATTRIBUTE_UNUSED = 0.5*dyi;
   const CCTK_REAL hdzi CCTK_ATTRIBUTE_UNUSED = 0.5*dzi;
-  
   /* Initialize predefined quantities */
   const CCTK_REAL p1o1 CCTK_ATTRIBUTE_UNUSED = 1;
   const CCTK_REAL p1odx CCTK_ATTRIBUTE_UNUSED = INV(dx);
   const CCTK_REAL p1ody CCTK_ATTRIBUTE_UNUSED = INV(dy);
   const CCTK_REAL p1odz CCTK_ATTRIBUTE_UNUSED = INV(dz);
-  
   /* Assign local copies of arrays functions */
   
   
-  
   /* Calculate temporaries and arrays functions */
-  
   /* Copy local copies back to grid functions */
-  
   /* Loop over the grid points */
   const int imin0=imin[0];
   const int imin1=imin[1];
@@ -85,7 +79,6 @@ static void eulerauto_cons_calc_conserved_Body(const cGH* restrict const cctkGH,
   {
     const ptrdiff_t index CCTK_ATTRIBUTE_UNUSED = di*i + dj*j + dk*k;
     // ++vec_iter_counter;
-    
     /* Assign local copies of grid functions */
     
     CCTK_REAL pL CCTK_ATTRIBUTE_UNUSED = p[index];
@@ -94,11 +87,8 @@ static void eulerauto_cons_calc_conserved_Body(const cGH* restrict const cctkGH,
     CCTK_REAL v2L CCTK_ATTRIBUTE_UNUSED = v2[index];
     CCTK_REAL v3L CCTK_ATTRIBUTE_UNUSED = v3[index];
     
-    
     /* Include user supplied include files */
-    
     /* Precompute derivatives */
-    
     /* Calculate temporaries and grid functions */
     CCTK_REAL DenL CCTK_ATTRIBUTE_UNUSED = rhoL;
     
@@ -110,7 +100,6 @@ static void eulerauto_cons_calc_conserved_Body(const cGH* restrict const cctkGH,
     
     CCTK_REAL EnL CCTK_ATTRIBUTE_UNUSED = pL*INV(-1 + ToReal(gamma)) + 
       0.5*rhoL*(SQR(v1L) + SQR(v2L) + SQR(v3L));
-    
     /* Copy local copies back to grid functions */
     Den[index] = DenL;
     En[index] = EnL;
@@ -120,18 +109,15 @@ static void eulerauto_cons_calc_conserved_Body(const cGH* restrict const cctkGH,
   }
   CCTK_ENDLOOP3(eulerauto_cons_calc_conserved);
 }
-
 extern "C" void eulerauto_cons_calc_conserved(CCTK_ARGUMENTS)
 {
   DECLARE_CCTK_ARGUMENTS;
   DECLARE_CCTK_PARAMETERS;
   
-  
   if (verbose > 1)
   {
     CCTK_VInfo(CCTK_THORNSTRING,"Entering eulerauto_cons_calc_conserved_Body");
   }
-  
   if (cctk_iteration % eulerauto_cons_calc_conserved_calc_every != eulerauto_cons_calc_conserved_calc_offset)
   {
     return;
@@ -148,7 +134,6 @@ extern "C" void eulerauto_cons_calc_conserved(CCTK_ARGUMENTS)
   
   
   GenericFD_LoopOverEverything(cctkGH, eulerauto_cons_calc_conserved_Body);
-  
   if (verbose > 1)
   {
     CCTK_VInfo(CCTK_THORNSTRING,"Leaving eulerauto_cons_calc_conserved_Body");

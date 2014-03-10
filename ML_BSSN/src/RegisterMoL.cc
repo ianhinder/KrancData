@@ -10,7 +10,6 @@ extern "C" void ML_BSSN_RegisterVars(CCTK_ARGUMENTS)
   DECLARE_CCTK_PARAMETERS;
   
   CCTK_INT ierr CCTK_ATTRIBUTE_UNUSED = 0;
-  
   /* Register all the evolved grid functions with MoL */
   ierr += MoLRegisterEvolved(CCTK_VarIndex("ML_BSSN::At11"),  CCTK_VarIndex("ML_BSSN::At11rhs"));
   ierr += MoLRegisterEvolved(CCTK_VarIndex("ML_BSSN::At12"),  CCTK_VarIndex("ML_BSSN::At12rhs"));
@@ -37,7 +36,6 @@ extern "C" void ML_BSSN_RegisterVars(CCTK_ARGUMENTS)
   ierr += MoLRegisterEvolved(CCTK_VarIndex("ML_BSSN::beta2"),  CCTK_VarIndex("ML_BSSN::beta2rhs"));
   ierr += MoLRegisterEvolved(CCTK_VarIndex("ML_BSSN::beta3"),  CCTK_VarIndex("ML_BSSN::beta3rhs"));
   ierr += MoLRegisterEvolved(CCTK_VarIndex("ML_BSSN::trK"),  CCTK_VarIndex("ML_BSSN::trKrhs"));
-  
   /* Register all the evolved Array functions with MoL */
   return;
 }
