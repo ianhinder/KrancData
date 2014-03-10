@@ -86,13 +86,12 @@ static void calc_rhs_Body(const cGH* restrict const cctkGH, const int dir, const
   const int imax0=imax[0];
   const int imax1=imax[1];
   const int imax2=imax[2];
-  #pragma omp parallel // reduction(+: vec_iter_counter, vec_op_counter, vec_mem_counter)
+  #pragma omp parallel
   CCTK_LOOP3(calc_rhs,
     i,j,k, imin0,imin1,imin2, imax0,imax1,imax2,
     cctk_ash[0],cctk_ash[1],cctk_ash[2])
   {
     const ptrdiff_t index CCTK_ATTRIBUTE_UNUSED = di*i + dj*j + dk*k;
-    // ++vec_iter_counter;
     /* Assign local copies of grid functions */
     
     CCTK_REAL phiL CCTK_ATTRIBUTE_UNUSED = phi[index];
