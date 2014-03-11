@@ -15,22 +15,22 @@ schedule TestSimpleWave_RegisterSymmetries in SymmetryRegister
   OPTIONS: meta
 } "register symmetries"
 
-schedule initial_sine AT initial
+schedule TestSimpleWave_InitialSine AT initial
 {
   LANG: C
   READS: grid::x(Everywhere)
   WRITES: TestSimpleWave::phi(Everywhere)
   WRITES: TestSimpleWave::pi(Everywhere)
-} "initial_sine"
+} "TestSimpleWave_InitialSine"
 
-schedule calc_rhs IN MoL_CalcRHS
+schedule TestSimpleWave_CalcRHS IN MoL_CalcRHS
 {
   LANG: C
   READS: TestSimpleWave::phi(Everywhere)
   READS: TestSimpleWave::pi(Everywhere)
   WRITES: TestSimpleWave::phirhs(Interior)
   WRITES: TestSimpleWave::pirhs(Interior)
-} "calc_rhs"
+} "TestSimpleWave_CalcRHS"
 
 schedule TestSimpleWave_SelectBoundConds in MoL_PostStep
 {

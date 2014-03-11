@@ -23,21 +23,21 @@
 #define CUB(x) ((x) * SQR(x))
 #define QAD(x) (SQR(SQR(x)))
 
-extern "C" void calc_rhs_SelectBCs(CCTK_ARGUMENTS)
+extern "C" void TestSimpleWave_CalcRHS_SelectBCs(CCTK_ARGUMENTS)
 {
   DECLARE_CCTK_ARGUMENTS;
   DECLARE_CCTK_PARAMETERS;
   
-  if (cctk_iteration % calc_rhs_calc_every != calc_rhs_calc_offset)
+  if (cctk_iteration % TestSimpleWave_CalcRHS_calc_every != TestSimpleWave_CalcRHS_calc_offset)
     return;
   CCTK_INT ierr CCTK_ATTRIBUTE_UNUSED = 0;
-  ierr = Boundary_SelectGroupForBC(cctkGH, CCTK_ALL_FACES, GenericFD_GetBoundaryWidth(cctkGH), -1 /* no table */, "TestSimpleWaveODE::evolved_grouprhs","flat");
+  ierr = Boundary_SelectGroupForBC(cctkGH, CCTK_ALL_FACES, GenericFD_GetBoundaryWidth(cctkGH), -1 /* no table */, "TestSimpleWave::evolved_grouprhs","flat");
   if (ierr < 0)
-    CCTK_WARN(1, "Failed to register flat BC for TestSimpleWaveODE::evolved_grouprhs.");
+    CCTK_WARN(1, "Failed to register flat BC for TestSimpleWave::evolved_grouprhs.");
   return;
 }
 
-static void calc_rhs_Body(const cGH* restrict const cctkGH, const int dir, const int face, const CCTK_REAL normal[3], const CCTK_REAL tangentA[3], const CCTK_REAL tangentB[3], const int imin[3], const int imax[3], const int n_subblock_gfs, CCTK_REAL* restrict const subblock_gfs[])
+static void TestSimpleWave_CalcRHS_Body(const cGH* restrict const cctkGH, const int dir, const int face, const CCTK_REAL normal[3], const CCTK_REAL tangentA[3], const CCTK_REAL tangentB[3], const int imin[3], const int imax[3], const int n_subblock_gfs, CCTK_REAL* restrict const subblock_gfs[])
 {
   DECLARE_CCTK_ARGUMENTS;
   DECLARE_CCTK_PARAMETERS;
@@ -88,7 +88,7 @@ static void calc_rhs_Body(const cGH* restrict const cctkGH, const int dir, const
   const int imax1=imax[1];
   const int imax2=imax[2];
   #pragma omp parallel
-  CCTK_LOOP3(calc_rhs,
+  CCTK_LOOP3(TestSimpleWave_CalcRHS,
     i,j,k, imin0,imin1,imin2, imax0,imax1,imax2,
     cctk_ash[0],cctk_ash[1],cctk_ash[2])
   {
@@ -112,32 +112,32 @@ static void calc_rhs_Body(const cGH* restrict const cctkGH, const int dir, const
     phirhs[index] = phirhsL;
     pirhs[index] = pirhsL;
   }
-  CCTK_ENDLOOP3(calc_rhs);
+  CCTK_ENDLOOP3(TestSimpleWave_CalcRHS);
 }
-extern "C" void calc_rhs(CCTK_ARGUMENTS)
+extern "C" void TestSimpleWave_CalcRHS(CCTK_ARGUMENTS)
 {
   DECLARE_CCTK_ARGUMENTS;
   DECLARE_CCTK_PARAMETERS;
   
   if (verbose > 1)
   {
-    CCTK_VInfo(CCTK_THORNSTRING,"Entering calc_rhs_Body");
+    CCTK_VInfo(CCTK_THORNSTRING,"Entering TestSimpleWave_CalcRHS_Body");
   }
-  if (cctk_iteration % calc_rhs_calc_every != calc_rhs_calc_offset)
+  if (cctk_iteration % TestSimpleWave_CalcRHS_calc_every != TestSimpleWave_CalcRHS_calc_offset)
   {
     return;
   }
   
   const char* const groups[] = {
-    "TestSimpleWaveODE::evolved_group",
-    "TestSimpleWaveODE::evolved_grouprhs"};
-  GenericFD_AssertGroupStorage(cctkGH, "calc_rhs", 2, groups);
+    "TestSimpleWave::evolved_group",
+    "TestSimpleWave::evolved_grouprhs"};
+  GenericFD_AssertGroupStorage(cctkGH, "TestSimpleWave_CalcRHS", 2, groups);
   
-  GenericFD_EnsureStencilFits(cctkGH, "calc_rhs", 1, 1, 1);
+  GenericFD_EnsureStencilFits(cctkGH, "TestSimpleWave_CalcRHS", 1, 1, 1);
   
-  GenericFD_LoopOverInterior(cctkGH, calc_rhs_Body);
+  GenericFD_LoopOverInterior(cctkGH, TestSimpleWave_CalcRHS_Body);
   if (verbose > 1)
   {
-    CCTK_VInfo(CCTK_THORNSTRING,"Leaving calc_rhs_Body");
+    CCTK_VInfo(CCTK_THORNSTRING,"Leaving TestSimpleWave_CalcRHS_Body");
   }
 }

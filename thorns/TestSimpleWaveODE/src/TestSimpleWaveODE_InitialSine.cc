@@ -24,7 +24,7 @@
 #define QAD(x) (SQR(SQR(x)))
 
 
-static void initial_sine_Body(const cGH* restrict const cctkGH, const int dir, const int face, const CCTK_REAL normal[3], const CCTK_REAL tangentA[3], const CCTK_REAL tangentB[3], const int imin[3], const int imax[3], const int n_subblock_gfs, CCTK_REAL* restrict const subblock_gfs[])
+static void TestSimpleWaveODE_InitialSine_Body(const cGH* restrict const cctkGH, const int dir, const int face, const CCTK_REAL normal[3], const CCTK_REAL tangentA[3], const CCTK_REAL tangentB[3], const int imin[3], const int imax[3], const int n_subblock_gfs, CCTK_REAL* restrict const subblock_gfs[])
 {
   DECLARE_CCTK_ARGUMENTS;
   DECLARE_CCTK_PARAMETERS;
@@ -75,7 +75,7 @@ static void initial_sine_Body(const cGH* restrict const cctkGH, const int dir, c
   const int imax1=imax[1];
   const int imax2=imax[2];
   #pragma omp parallel
-  CCTK_LOOP3(initial_sine,
+  CCTK_LOOP3(TestSimpleWaveODE_InitialSine,
     i,j,k, imin0,imin1,imin2, imax0,imax1,imax2,
     cctk_ash[0],cctk_ash[1],cctk_ash[2])
   {
@@ -94,18 +94,18 @@ static void initial_sine_Body(const cGH* restrict const cctkGH, const int dir, c
     phi[index] = phiL;
     pi[index] = piL;
   }
-  CCTK_ENDLOOP3(initial_sine);
+  CCTK_ENDLOOP3(TestSimpleWaveODE_InitialSine);
 }
-extern "C" void initial_sine(CCTK_ARGUMENTS)
+extern "C" void TestSimpleWaveODE_InitialSine(CCTK_ARGUMENTS)
 {
   DECLARE_CCTK_ARGUMENTS;
   DECLARE_CCTK_PARAMETERS;
   
   if (verbose > 1)
   {
-    CCTK_VInfo(CCTK_THORNSTRING,"Entering initial_sine_Body");
+    CCTK_VInfo(CCTK_THORNSTRING,"Entering TestSimpleWaveODE_InitialSine_Body");
   }
-  if (cctk_iteration % initial_sine_calc_every != initial_sine_calc_offset)
+  if (cctk_iteration % TestSimpleWaveODE_InitialSine_calc_every != TestSimpleWaveODE_InitialSine_calc_offset)
   {
     return;
   }
@@ -113,12 +113,12 @@ extern "C" void initial_sine(CCTK_ARGUMENTS)
   const char* const groups[] = {
     "TestSimpleWaveODE::evolved_group",
     "grid::coordinates"};
-  GenericFD_AssertGroupStorage(cctkGH, "initial_sine", 2, groups);
+  GenericFD_AssertGroupStorage(cctkGH, "TestSimpleWaveODE_InitialSine", 2, groups);
   
   
-  GenericFD_LoopOverEverything(cctkGH, initial_sine_Body);
+  GenericFD_LoopOverEverything(cctkGH, TestSimpleWaveODE_InitialSine_Body);
   if (verbose > 1)
   {
-    CCTK_VInfo(CCTK_THORNSTRING,"Leaving initial_sine_Body");
+    CCTK_VInfo(CCTK_THORNSTRING,"Leaving TestSimpleWaveODE_InitialSine_Body");
   }
 }
