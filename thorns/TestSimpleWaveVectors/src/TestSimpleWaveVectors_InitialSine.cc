@@ -11,10 +11,9 @@
 #include "cctk.h"
 #include "cctk_Arguments.h"
 #include "cctk_Parameters.h"
-#include "GenericFD.h"
+#include "Kranc.hh"
 #include "Differencing.h"
 #include "loopcontrol.h"
-#include "Kranc.hh"
 #include "vectors.h"
 
 /* Define macros used in calculations */
@@ -27,6 +26,8 @@
 #define SQR(x) (kmul(x,x))
 #define CUB(x) (kmul(x,SQR(x)))
 #define QAD(x) (SQR(SQR(x)))
+
+namespace TestSimpleWaveVectors {
 
 
 static void TestSimpleWaveVectors_InitialSine_Body(const cGH* restrict const cctkGH, const int dir, const int face, const CCTK_REAL normal[3], const CCTK_REAL tangentA[3], const CCTK_REAL tangentB[3], const int imin[3], const int imax[3], const int n_subblock_gfs, CCTK_REAL* restrict const subblock_gfs[])
@@ -125,12 +126,14 @@ extern "C" void TestSimpleWaveVectors_InitialSine(CCTK_ARGUMENTS)
   const char* const groups[] = {
     "TestSimpleWaveVectors::evolved_group",
     "grid::coordinates"};
-  GenericFD_AssertGroupStorage(cctkGH, "TestSimpleWaveVectors_InitialSine", 2, groups);
+  AssertGroupStorage(cctkGH, "TestSimpleWaveVectors_InitialSine", 2, groups);
   
   
-  GenericFD_LoopOverEverything(cctkGH, TestSimpleWaveVectors_InitialSine_Body);
+  LoopOverEverything(cctkGH, TestSimpleWaveVectors_InitialSine_Body);
   if (verbose > 1)
   {
     CCTK_VInfo(CCTK_THORNSTRING,"Leaving TestSimpleWaveVectors_InitialSine_Body");
   }
 }
+
+} // namespace TestSimpleWaveVectors

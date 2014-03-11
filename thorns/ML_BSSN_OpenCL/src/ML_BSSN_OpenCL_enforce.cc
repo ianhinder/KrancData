@@ -11,10 +11,9 @@
 #include "cctk.h"
 #include "cctk_Arguments.h"
 #include "cctk_Parameters.h"
-#include "GenericFD.h"
+#include "Kranc.hh"
 #include "Differencing.h"
 #include "loopcontrol.h"
-#include "Kranc.hh"
 #include "OpenCLRunTime.h"
 #include "vectors.h"
 
@@ -28,6 +27,8 @@
 #define SQR(x) (kmul(x,x))
 #define CUB(x) (kmul(x,SQR(x)))
 #define QAD(x) (SQR(SQR(x)))
+
+namespace ML_BSSN_OpenCL {
 
 
 static void ML_BSSN_OpenCL_enforce_Body(const cGH* restrict const cctkGH, const int dir, const int face, const CCTK_REAL normal[3], const CCTK_REAL tangentA[3], const CCTK_REAL tangentB[3], const int imin[3], const int imax[3], const int n_subblock_gfs, CCTK_REAL* restrict const subblock_gfs[])
@@ -116,7 +117,7 @@ static void ML_BSSN_OpenCL_enforce_Body(const cGH* restrict const cctkGH, const 
   "}\n"
   "\n"
   "const CCTK_REAL* restrict jacobian_ptrs[9];\n"
-  "if (use_jacobian) GenericFD_GroupDataPointers(cctkGH, jacobian_group,\n"
+  "if (use_jacobian) GroupDataPointers(cctkGH, jacobian_group,\n"
   "                                              9, jacobian_ptrs);\n"
   "\n"
   "const CCTK_REAL* restrict const J11 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_ptrs[0] : 0;\n"
@@ -130,13 +131,13 @@ static void ML_BSSN_OpenCL_enforce_Body(const cGH* restrict const cctkGH, const 
   "const CCTK_REAL* restrict const J33 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_ptrs[8] : 0;\n"
   "\n"
   "const CCTK_REAL* restrict jacobian_determinant_ptrs[1] CCTK_ATTRIBUTE_UNUSED;\n"
-  "if (use_jacobian && strlen(jacobian_determinant_group) > 0) GenericFD_GroupDataPointers(cctkGH, jacobian_determinant_group,\n"
+  "if (use_jacobian && strlen(jacobian_determinant_group) > 0) GroupDataPointers(cctkGH, jacobian_determinant_group,\n"
   "                                              1, jacobian_determinant_ptrs);\n"
   "\n"
   "const CCTK_REAL* restrict const detJ CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_ptrs[0] : 0;\n"
   "\n"
   "const CCTK_REAL* restrict jacobian_inverse_ptrs[9] CCTK_ATTRIBUTE_UNUSED;\n"
-  "if (use_jacobian && strlen(jacobian_inverse_group) > 0) GenericFD_GroupDataPointers(cctkGH, jacobian_inverse_group,\n"
+  "if (use_jacobian && strlen(jacobian_inverse_group) > 0) GroupDataPointers(cctkGH, jacobian_inverse_group,\n"
   "                                              9, jacobian_inverse_ptrs);\n"
   "\n"
   "const CCTK_REAL* restrict const iJ11 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_inverse_ptrs[0] : 0;\n"
@@ -150,8 +151,8 @@ static void ML_BSSN_OpenCL_enforce_Body(const cGH* restrict const cctkGH, const 
   "const CCTK_REAL* restrict const iJ33 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_inverse_ptrs[8] : 0;\n"
   "\n"
   "const CCTK_REAL* restrict jacobian_derivative_ptrs[18] CCTK_ATTRIBUTE_UNUSED;\n"
-  "if (use_jacobian) GenericFD_GroupDataPointers(cctkGH, jacobian_derivative_group,\n"
-  "                                              18, jacobian_derivative_ptrs);\n"
+  "if (use_jacobian) GroupDataPointers(cctkGH, jacobian_derivative_group,\n"
+  "                                    18, jacobian_derivative_ptrs);\n"
   "\n"
   "const CCTK_REAL* restrict const dJ111 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_derivative_ptrs[0] : 0;\n"
   "const CCTK_REAL* restrict const dJ112 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_derivative_ptrs[1] : 0;\n"
@@ -312,7 +313,7 @@ extern "C" void ML_BSSN_OpenCL_enforce(CCTK_ARGUMENTS)
     "ML_BSSN_OpenCL::ML_curv",
     "ML_BSSN_OpenCL::ML_lapse",
     "ML_BSSN_OpenCL::ML_metric"};
-  GenericFD_AssertGroupStorage(cctkGH, "ML_BSSN_OpenCL_enforce", 3, groups);
+  AssertGroupStorage(cctkGH, "ML_BSSN_OpenCL_enforce", 3, groups);
   
   switch (fdOrder)
   {
@@ -329,9 +330,11 @@ extern "C" void ML_BSSN_OpenCL_enforce(CCTK_ARGUMENTS)
       CCTK_BUILTIN_UNREACHABLE();
   }
   
-  GenericFD_LoopOverEverything(cctkGH, ML_BSSN_OpenCL_enforce_Body);
+  LoopOverEverything(cctkGH, ML_BSSN_OpenCL_enforce_Body);
   if (verbose > 1)
   {
     CCTK_VInfo(CCTK_THORNSTRING,"Leaving ML_BSSN_OpenCL_enforce_Body");
   }
 }
+
+} // namespace ML_BSSN_OpenCL

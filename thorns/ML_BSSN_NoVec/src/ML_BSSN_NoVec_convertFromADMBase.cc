@@ -11,10 +11,9 @@
 #include "cctk.h"
 #include "cctk_Arguments.h"
 #include "cctk_Parameters.h"
-#include "GenericFD.h"
+#include "Kranc.hh"
 #include "Differencing.h"
 #include "loopcontrol.h"
-#include "Kranc.hh"
 
 /* Define macros used in calculations */
 #define INITVALUE (42)
@@ -22,6 +21,8 @@
 #define SQR(x) ((x) * (x))
 #define CUB(x) ((x) * SQR(x))
 #define QAD(x) (SQR(SQR(x)))
+
+namespace ML_BSSN_NoVec {
 
 
 static void ML_BSSN_NoVec_convertFromADMBase_Body(const cGH* restrict const cctkGH, const int dir, const int face, const CCTK_REAL normal[3], const CCTK_REAL tangentA[3], const CCTK_REAL tangentB[3], const int imin[3], const int imax[3], const int n_subblock_gfs, CCTK_REAL* restrict const subblock_gfs[])
@@ -106,7 +107,7 @@ static void ML_BSSN_NoVec_convertFromADMBase_Body(const cGH* restrict const cctk
   }
   
   const CCTK_REAL* restrict jacobian_ptrs[9];
-  if (use_jacobian) GenericFD_GroupDataPointers(cctkGH, jacobian_group,
+  if (use_jacobian) GroupDataPointers(cctkGH, jacobian_group,
                                                 9, jacobian_ptrs);
   
   const CCTK_REAL* restrict const J11 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_ptrs[0] : 0;
@@ -120,13 +121,13 @@ static void ML_BSSN_NoVec_convertFromADMBase_Body(const cGH* restrict const cctk
   const CCTK_REAL* restrict const J33 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_ptrs[8] : 0;
   
   const CCTK_REAL* restrict jacobian_determinant_ptrs[1] CCTK_ATTRIBUTE_UNUSED;
-  if (use_jacobian && strlen(jacobian_determinant_group) > 0) GenericFD_GroupDataPointers(cctkGH, jacobian_determinant_group,
+  if (use_jacobian && strlen(jacobian_determinant_group) > 0) GroupDataPointers(cctkGH, jacobian_determinant_group,
                                                 1, jacobian_determinant_ptrs);
   
   const CCTK_REAL* restrict const detJ CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_ptrs[0] : 0;
   
   const CCTK_REAL* restrict jacobian_inverse_ptrs[9] CCTK_ATTRIBUTE_UNUSED;
-  if (use_jacobian && strlen(jacobian_inverse_group) > 0) GenericFD_GroupDataPointers(cctkGH, jacobian_inverse_group,
+  if (use_jacobian && strlen(jacobian_inverse_group) > 0) GroupDataPointers(cctkGH, jacobian_inverse_group,
                                                 9, jacobian_inverse_ptrs);
   
   const CCTK_REAL* restrict const iJ11 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_inverse_ptrs[0] : 0;
@@ -140,8 +141,8 @@ static void ML_BSSN_NoVec_convertFromADMBase_Body(const cGH* restrict const cctk
   const CCTK_REAL* restrict const iJ33 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_inverse_ptrs[8] : 0;
   
   const CCTK_REAL* restrict jacobian_derivative_ptrs[18] CCTK_ATTRIBUTE_UNUSED;
-  if (use_jacobian) GenericFD_GroupDataPointers(cctkGH, jacobian_derivative_group,
-                                                18, jacobian_derivative_ptrs);
+  if (use_jacobian) GroupDataPointers(cctkGH, jacobian_derivative_group,
+                                      18, jacobian_derivative_ptrs);
   
   const CCTK_REAL* restrict const dJ111 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_derivative_ptrs[0] : 0;
   const CCTK_REAL* restrict const dJ112 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_derivative_ptrs[1] : 0;
@@ -349,7 +350,7 @@ extern "C" void ML_BSSN_NoVec_convertFromADMBase(CCTK_ARGUMENTS)
     "ML_BSSN_NoVec::ML_metric",
     "ML_BSSN_NoVec::ML_shift",
     "ML_BSSN_NoVec::ML_trace_curv"};
-  GenericFD_AssertGroupStorage(cctkGH, "ML_BSSN_NoVec_convertFromADMBase", 10, groups);
+  AssertGroupStorage(cctkGH, "ML_BSSN_NoVec_convertFromADMBase", 10, groups);
   
   switch (fdOrder)
   {
@@ -366,9 +367,11 @@ extern "C" void ML_BSSN_NoVec_convertFromADMBase(CCTK_ARGUMENTS)
       CCTK_BUILTIN_UNREACHABLE();
   }
   
-  GenericFD_LoopOverEverything(cctkGH, ML_BSSN_NoVec_convertFromADMBase_Body);
+  LoopOverEverything(cctkGH, ML_BSSN_NoVec_convertFromADMBase_Body);
   if (verbose > 1)
   {
     CCTK_VInfo(CCTK_THORNSTRING,"Leaving ML_BSSN_NoVec_convertFromADMBase_Body");
   }
 }
+
+} // namespace ML_BSSN_NoVec

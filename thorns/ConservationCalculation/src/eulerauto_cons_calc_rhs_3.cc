@@ -11,10 +11,9 @@
 #include "cctk.h"
 #include "cctk_Arguments.h"
 #include "cctk_Parameters.h"
-#include "GenericFD.h"
+#include "Kranc.hh"
 #include "Differencing.h"
 #include "loopcontrol.h"
-#include "Kranc.hh"
 
 /* Define macros used in calculations */
 #define INITVALUE (42)
@@ -22,6 +21,8 @@
 #define SQR(x) ((x) * (x))
 #define CUB(x) ((x) * SQR(x))
 #define QAD(x) (SQR(SQR(x)))
+
+namespace ConservationCalculation {
 
 extern "C" void eulerauto_cons_calc_rhs_3_SelectBCs(CCTK_ARGUMENTS)
 {
@@ -31,13 +32,13 @@ extern "C" void eulerauto_cons_calc_rhs_3_SelectBCs(CCTK_ARGUMENTS)
   if (cctk_iteration % eulerauto_cons_calc_rhs_3_calc_every != eulerauto_cons_calc_rhs_3_calc_offset)
     return;
   CCTK_INT ierr CCTK_ATTRIBUTE_UNUSED = 0;
-  ierr = Boundary_SelectGroupForBC(cctkGH, CCTK_ALL_FACES, GenericFD_GetBoundaryWidth(cctkGH), -1 /* no table */, "ConservationCalculation::Den_grouprhs","flat");
+  ierr = Boundary_SelectGroupForBC(cctkGH, CCTK_ALL_FACES, GetBoundaryWidth(cctkGH), -1 /* no table */, "ConservationCalculation::Den_grouprhs","flat");
   if (ierr < 0)
     CCTK_WARN(1, "Failed to register flat BC for ConservationCalculation::Den_grouprhs.");
-  ierr = Boundary_SelectGroupForBC(cctkGH, CCTK_ALL_FACES, GenericFD_GetBoundaryWidth(cctkGH), -1 /* no table */, "ConservationCalculation::En_grouprhs","flat");
+  ierr = Boundary_SelectGroupForBC(cctkGH, CCTK_ALL_FACES, GetBoundaryWidth(cctkGH), -1 /* no table */, "ConservationCalculation::En_grouprhs","flat");
   if (ierr < 0)
     CCTK_WARN(1, "Failed to register flat BC for ConservationCalculation::En_grouprhs.");
-  ierr = Boundary_SelectGroupForBC(cctkGH, CCTK_ALL_FACES, GenericFD_GetBoundaryWidth(cctkGH), -1 /* no table */, "ConservationCalculation::S_grouprhs","flat");
+  ierr = Boundary_SelectGroupForBC(cctkGH, CCTK_ALL_FACES, GetBoundaryWidth(cctkGH), -1 /* no table */, "ConservationCalculation::S_grouprhs","flat");
   if (ierr < 0)
     CCTK_WARN(1, "Failed to register flat BC for ConservationCalculation::S_grouprhs.");
   return;
@@ -159,13 +160,15 @@ extern "C" void eulerauto_cons_calc_rhs_3(CCTK_ARGUMENTS)
     "ConservationCalculation::S2_flux_group",
     "ConservationCalculation::S3_flux_group",
     "ConservationCalculation::S_grouprhs"};
-  GenericFD_AssertGroupStorage(cctkGH, "eulerauto_cons_calc_rhs_3", 8, groups);
+  AssertGroupStorage(cctkGH, "eulerauto_cons_calc_rhs_3", 8, groups);
   
-  GenericFD_EnsureStencilFits(cctkGH, "eulerauto_cons_calc_rhs_3", 1, 1, 1);
+  EnsureStencilFits(cctkGH, "eulerauto_cons_calc_rhs_3", 1, 1, 1);
   
-  GenericFD_LoopOverInterior(cctkGH, eulerauto_cons_calc_rhs_3_Body);
+  LoopOverInterior(cctkGH, eulerauto_cons_calc_rhs_3_Body);
   if (verbose > 1)
   {
     CCTK_VInfo(CCTK_THORNSTRING,"Leaving eulerauto_cons_calc_rhs_3_Body");
   }
 }
+
+} // namespace ConservationCalculation

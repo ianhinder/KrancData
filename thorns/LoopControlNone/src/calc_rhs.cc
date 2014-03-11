@@ -11,9 +11,8 @@
 #include "cctk.h"
 #include "cctk_Arguments.h"
 #include "cctk_Parameters.h"
-#include "GenericFD.h"
-#include "Differencing.h"
 #include "Kranc.hh"
+#include "Differencing.h"
 
 /* Define macros used in calculations */
 #define INITVALUE (42)
@@ -21,6 +20,8 @@
 #define SQR(x) ((x) * (x))
 #define CUB(x) ((x) * SQR(x))
 #define QAD(x) (SQR(SQR(x)))
+
+namespace LoopControlNone {
 
 extern "C" void calc_rhs_SelectBCs(CCTK_ARGUMENTS)
 {
@@ -30,7 +31,7 @@ extern "C" void calc_rhs_SelectBCs(CCTK_ARGUMENTS)
   if (cctk_iteration % calc_rhs_calc_every != calc_rhs_calc_offset)
     return;
   CCTK_INT ierr CCTK_ATTRIBUTE_UNUSED = 0;
-  ierr = Boundary_SelectGroupForBC(cctkGH, CCTK_ALL_FACES, GenericFD_GetBoundaryWidth(cctkGH), -1 /* no table */, "LoopControlNone::evolved_grouprhs","flat");
+  ierr = Boundary_SelectGroupForBC(cctkGH, CCTK_ALL_FACES, GetBoundaryWidth(cctkGH), -1 /* no table */, "LoopControlNone::evolved_grouprhs","flat");
   if (ierr < 0)
     CCTK_WARN(1, "Failed to register flat BC for LoopControlNone::evolved_grouprhs.");
   return;
@@ -130,13 +131,15 @@ extern "C" void calc_rhs(CCTK_ARGUMENTS)
   const char* const groups[] = {
     "LoopControlNone::evolved_group",
     "LoopControlNone::evolved_grouprhs"};
-  GenericFD_AssertGroupStorage(cctkGH, "calc_rhs", 2, groups);
+  AssertGroupStorage(cctkGH, "calc_rhs", 2, groups);
   
-  GenericFD_EnsureStencilFits(cctkGH, "calc_rhs", 1, 1, 1);
+  EnsureStencilFits(cctkGH, "calc_rhs", 1, 1, 1);
   
-  GenericFD_LoopOverInterior(cctkGH, calc_rhs_Body);
+  LoopOverInterior(cctkGH, calc_rhs_Body);
   if (verbose > 1)
   {
     CCTK_VInfo(CCTK_THORNSTRING,"Leaving calc_rhs_Body");
   }
 }
+
+} // namespace LoopControlNone

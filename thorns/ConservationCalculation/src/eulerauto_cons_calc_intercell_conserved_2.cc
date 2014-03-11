@@ -11,10 +11,9 @@
 #include "cctk.h"
 #include "cctk_Arguments.h"
 #include "cctk_Parameters.h"
-#include "GenericFD.h"
+#include "Kranc.hh"
 #include "Differencing.h"
 #include "loopcontrol.h"
-#include "Kranc.hh"
 
 /* Define macros used in calculations */
 #define INITVALUE (42)
@@ -22,6 +21,8 @@
 #define SQR(x) ((x) * (x))
 #define CUB(x) ((x) * SQR(x))
 #define QAD(x) (SQR(SQR(x)))
+
+namespace ConservationCalculation {
 
 
 static void eulerauto_cons_calc_intercell_conserved_2_Body(const cGH* restrict const cctkGH, const int dir, const int face, const CCTK_REAL normal[3], const CCTK_REAL tangentA[3], const CCTK_REAL tangentB[3], const int imin[3], const int imax[3], const int n_subblock_gfs, CCTK_REAL* restrict const subblock_gfs[])
@@ -156,12 +157,14 @@ extern "C" void eulerauto_cons_calc_intercell_conserved_2(CCTK_ARGUMENTS)
     "ConservationCalculation::v1_lr_group",
     "ConservationCalculation::v2_lr_group",
     "ConservationCalculation::v3_lr_group"};
-  GenericFD_AssertGroupStorage(cctkGH, "eulerauto_cons_calc_intercell_conserved_2", 10, groups);
+  AssertGroupStorage(cctkGH, "eulerauto_cons_calc_intercell_conserved_2", 10, groups);
   
   
-  GenericFD_LoopOverEverything(cctkGH, eulerauto_cons_calc_intercell_conserved_2_Body);
+  LoopOverEverything(cctkGH, eulerauto_cons_calc_intercell_conserved_2_Body);
   if (verbose > 1)
   {
     CCTK_VInfo(CCTK_THORNSTRING,"Leaving eulerauto_cons_calc_intercell_conserved_2_Body");
   }
 }
+
+} // namespace ConservationCalculation

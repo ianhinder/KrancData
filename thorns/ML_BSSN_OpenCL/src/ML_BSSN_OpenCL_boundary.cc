@@ -11,10 +11,9 @@
 #include "cctk.h"
 #include "cctk_Arguments.h"
 #include "cctk_Parameters.h"
-#include "GenericFD.h"
+#include "Kranc.hh"
 #include "Differencing.h"
 #include "loopcontrol.h"
-#include "Kranc.hh"
 #include "OpenCLRunTime.h"
 #include "vectors.h"
 
@@ -29,6 +28,8 @@
 #define CUB(x) (kmul(x,SQR(x)))
 #define QAD(x) (SQR(SQR(x)))
 
+namespace ML_BSSN_OpenCL {
+
 extern "C" void ML_BSSN_OpenCL_boundary_SelectBCs(CCTK_ARGUMENTS)
 {
   DECLARE_CCTK_ARGUMENTS;
@@ -37,31 +38,31 @@ extern "C" void ML_BSSN_OpenCL_boundary_SelectBCs(CCTK_ARGUMENTS)
   if (cctk_iteration % ML_BSSN_OpenCL_boundary_calc_every != ML_BSSN_OpenCL_boundary_calc_offset)
     return;
   CCTK_INT ierr CCTK_ATTRIBUTE_UNUSED = 0;
-  ierr = Boundary_SelectGroupForBC(cctkGH, CCTK_ALL_FACES, GenericFD_GetBoundaryWidth(cctkGH), -1 /* no table */, "ML_BSSN_OpenCL::ML_curv","flat");
+  ierr = Boundary_SelectGroupForBC(cctkGH, CCTK_ALL_FACES, GetBoundaryWidth(cctkGH), -1 /* no table */, "ML_BSSN_OpenCL::ML_curv","flat");
   if (ierr < 0)
     CCTK_WARN(1, "Failed to register flat BC for ML_BSSN_OpenCL::ML_curv.");
-  ierr = Boundary_SelectGroupForBC(cctkGH, CCTK_ALL_FACES, GenericFD_GetBoundaryWidth(cctkGH), -1 /* no table */, "ML_BSSN_OpenCL::ML_dtlapse","flat");
+  ierr = Boundary_SelectGroupForBC(cctkGH, CCTK_ALL_FACES, GetBoundaryWidth(cctkGH), -1 /* no table */, "ML_BSSN_OpenCL::ML_dtlapse","flat");
   if (ierr < 0)
     CCTK_WARN(1, "Failed to register flat BC for ML_BSSN_OpenCL::ML_dtlapse.");
-  ierr = Boundary_SelectGroupForBC(cctkGH, CCTK_ALL_FACES, GenericFD_GetBoundaryWidth(cctkGH), -1 /* no table */, "ML_BSSN_OpenCL::ML_dtshift","flat");
+  ierr = Boundary_SelectGroupForBC(cctkGH, CCTK_ALL_FACES, GetBoundaryWidth(cctkGH), -1 /* no table */, "ML_BSSN_OpenCL::ML_dtshift","flat");
   if (ierr < 0)
     CCTK_WARN(1, "Failed to register flat BC for ML_BSSN_OpenCL::ML_dtshift.");
-  ierr = Boundary_SelectGroupForBC(cctkGH, CCTK_ALL_FACES, GenericFD_GetBoundaryWidth(cctkGH), -1 /* no table */, "ML_BSSN_OpenCL::ML_Gamma","flat");
+  ierr = Boundary_SelectGroupForBC(cctkGH, CCTK_ALL_FACES, GetBoundaryWidth(cctkGH), -1 /* no table */, "ML_BSSN_OpenCL::ML_Gamma","flat");
   if (ierr < 0)
     CCTK_WARN(1, "Failed to register flat BC for ML_BSSN_OpenCL::ML_Gamma.");
-  ierr = Boundary_SelectGroupForBC(cctkGH, CCTK_ALL_FACES, GenericFD_GetBoundaryWidth(cctkGH), -1 /* no table */, "ML_BSSN_OpenCL::ML_lapse","flat");
+  ierr = Boundary_SelectGroupForBC(cctkGH, CCTK_ALL_FACES, GetBoundaryWidth(cctkGH), -1 /* no table */, "ML_BSSN_OpenCL::ML_lapse","flat");
   if (ierr < 0)
     CCTK_WARN(1, "Failed to register flat BC for ML_BSSN_OpenCL::ML_lapse.");
-  ierr = Boundary_SelectGroupForBC(cctkGH, CCTK_ALL_FACES, GenericFD_GetBoundaryWidth(cctkGH), -1 /* no table */, "ML_BSSN_OpenCL::ML_log_confac","flat");
+  ierr = Boundary_SelectGroupForBC(cctkGH, CCTK_ALL_FACES, GetBoundaryWidth(cctkGH), -1 /* no table */, "ML_BSSN_OpenCL::ML_log_confac","flat");
   if (ierr < 0)
     CCTK_WARN(1, "Failed to register flat BC for ML_BSSN_OpenCL::ML_log_confac.");
-  ierr = Boundary_SelectGroupForBC(cctkGH, CCTK_ALL_FACES, GenericFD_GetBoundaryWidth(cctkGH), -1 /* no table */, "ML_BSSN_OpenCL::ML_metric","flat");
+  ierr = Boundary_SelectGroupForBC(cctkGH, CCTK_ALL_FACES, GetBoundaryWidth(cctkGH), -1 /* no table */, "ML_BSSN_OpenCL::ML_metric","flat");
   if (ierr < 0)
     CCTK_WARN(1, "Failed to register flat BC for ML_BSSN_OpenCL::ML_metric.");
-  ierr = Boundary_SelectGroupForBC(cctkGH, CCTK_ALL_FACES, GenericFD_GetBoundaryWidth(cctkGH), -1 /* no table */, "ML_BSSN_OpenCL::ML_shift","flat");
+  ierr = Boundary_SelectGroupForBC(cctkGH, CCTK_ALL_FACES, GetBoundaryWidth(cctkGH), -1 /* no table */, "ML_BSSN_OpenCL::ML_shift","flat");
   if (ierr < 0)
     CCTK_WARN(1, "Failed to register flat BC for ML_BSSN_OpenCL::ML_shift.");
-  ierr = Boundary_SelectGroupForBC(cctkGH, CCTK_ALL_FACES, GenericFD_GetBoundaryWidth(cctkGH), -1 /* no table */, "ML_BSSN_OpenCL::ML_trace_curv","flat");
+  ierr = Boundary_SelectGroupForBC(cctkGH, CCTK_ALL_FACES, GetBoundaryWidth(cctkGH), -1 /* no table */, "ML_BSSN_OpenCL::ML_trace_curv","flat");
   if (ierr < 0)
     CCTK_WARN(1, "Failed to register flat BC for ML_BSSN_OpenCL::ML_trace_curv.");
   return;
@@ -153,7 +154,7 @@ static void ML_BSSN_OpenCL_boundary_Body(const cGH* restrict const cctkGH, const
   "}\n"
   "\n"
   "const CCTK_REAL* restrict jacobian_ptrs[9];\n"
-  "if (use_jacobian) GenericFD_GroupDataPointers(cctkGH, jacobian_group,\n"
+  "if (use_jacobian) GroupDataPointers(cctkGH, jacobian_group,\n"
   "                                              9, jacobian_ptrs);\n"
   "\n"
   "const CCTK_REAL* restrict const J11 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_ptrs[0] : 0;\n"
@@ -167,13 +168,13 @@ static void ML_BSSN_OpenCL_boundary_Body(const cGH* restrict const cctkGH, const
   "const CCTK_REAL* restrict const J33 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_ptrs[8] : 0;\n"
   "\n"
   "const CCTK_REAL* restrict jacobian_determinant_ptrs[1] CCTK_ATTRIBUTE_UNUSED;\n"
-  "if (use_jacobian && strlen(jacobian_determinant_group) > 0) GenericFD_GroupDataPointers(cctkGH, jacobian_determinant_group,\n"
+  "if (use_jacobian && strlen(jacobian_determinant_group) > 0) GroupDataPointers(cctkGH, jacobian_determinant_group,\n"
   "                                              1, jacobian_determinant_ptrs);\n"
   "\n"
   "const CCTK_REAL* restrict const detJ CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_ptrs[0] : 0;\n"
   "\n"
   "const CCTK_REAL* restrict jacobian_inverse_ptrs[9] CCTK_ATTRIBUTE_UNUSED;\n"
-  "if (use_jacobian && strlen(jacobian_inverse_group) > 0) GenericFD_GroupDataPointers(cctkGH, jacobian_inverse_group,\n"
+  "if (use_jacobian && strlen(jacobian_inverse_group) > 0) GroupDataPointers(cctkGH, jacobian_inverse_group,\n"
   "                                              9, jacobian_inverse_ptrs);\n"
   "\n"
   "const CCTK_REAL* restrict const iJ11 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_inverse_ptrs[0] : 0;\n"
@@ -187,8 +188,8 @@ static void ML_BSSN_OpenCL_boundary_Body(const cGH* restrict const cctkGH, const
   "const CCTK_REAL* restrict const iJ33 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_inverse_ptrs[8] : 0;\n"
   "\n"
   "const CCTK_REAL* restrict jacobian_derivative_ptrs[18] CCTK_ATTRIBUTE_UNUSED;\n"
-  "if (use_jacobian) GenericFD_GroupDataPointers(cctkGH, jacobian_derivative_group,\n"
-  "                                              18, jacobian_derivative_ptrs);\n"
+  "if (use_jacobian) GroupDataPointers(cctkGH, jacobian_derivative_group,\n"
+  "                                    18, jacobian_derivative_ptrs);\n"
   "\n"
   "const CCTK_REAL* restrict const dJ111 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_derivative_ptrs[0] : 0;\n"
   "const CCTK_REAL* restrict const dJ112 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_derivative_ptrs[1] : 0;\n"
@@ -374,7 +375,7 @@ extern "C" void ML_BSSN_OpenCL_boundary(CCTK_ARGUMENTS)
     "ML_BSSN_OpenCL::ML_metric",
     "ML_BSSN_OpenCL::ML_shift",
     "ML_BSSN_OpenCL::ML_trace_curv"};
-  GenericFD_AssertGroupStorage(cctkGH, "ML_BSSN_OpenCL_boundary", 9, groups);
+  AssertGroupStorage(cctkGH, "ML_BSSN_OpenCL_boundary", 9, groups);
   
   switch (fdOrder)
   {
@@ -391,9 +392,11 @@ extern "C" void ML_BSSN_OpenCL_boundary(CCTK_ARGUMENTS)
       CCTK_BUILTIN_UNREACHABLE();
   }
   
-  GenericFD_LoopOverBoundaryWithGhosts(cctkGH, ML_BSSN_OpenCL_boundary_Body);
+  LoopOverBoundaryWithGhosts(cctkGH, ML_BSSN_OpenCL_boundary_Body);
   if (verbose > 1)
   {
     CCTK_VInfo(CCTK_THORNSTRING,"Leaving ML_BSSN_OpenCL_boundary_Body");
   }
 }
+
+} // namespace ML_BSSN_OpenCL

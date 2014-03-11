@@ -11,10 +11,9 @@
 #include "cctk.h"
 #include "cctk_Arguments.h"
 #include "cctk_Parameters.h"
-#include "GenericFD.h"
+#include "Kranc.hh"
 #include "Differencing.h"
 #include "loopcontrol.h"
-#include "Kranc.hh"
 #include "vectors.h"
 
 /* Define macros used in calculations */
@@ -28,6 +27,8 @@
 #define CUB(x) (kmul(x,SQR(x)))
 #define QAD(x) (SQR(SQR(x)))
 
+namespace ML_BSSN_DGFE {
+
 extern "C" void ML_BSSN_DGFE_RHS2_SelectBCs(CCTK_ARGUMENTS)
 {
   DECLARE_CCTK_ARGUMENTS;
@@ -36,7 +37,7 @@ extern "C" void ML_BSSN_DGFE_RHS2_SelectBCs(CCTK_ARGUMENTS)
   if (cctk_iteration % ML_BSSN_DGFE_RHS2_calc_every != ML_BSSN_DGFE_RHS2_calc_offset)
     return;
   CCTK_INT ierr CCTK_ATTRIBUTE_UNUSED = 0;
-  ierr = Boundary_SelectGroupForBC(cctkGH, CCTK_ALL_FACES, GenericFD_GetBoundaryWidth(cctkGH), -1 /* no table */, "ML_BSSN_DGFE::ML_curvrhs","flat");
+  ierr = Boundary_SelectGroupForBC(cctkGH, CCTK_ALL_FACES, GetBoundaryWidth(cctkGH), -1 /* no table */, "ML_BSSN_DGFE::ML_curvrhs","flat");
   if (ierr < 0)
     CCTK_WARN(1, "Failed to register flat BC for ML_BSSN_DGFE::ML_curvrhs.");
   return;
@@ -327,7 +328,7 @@ static void ML_BSSN_DGFE_RHS2_Body(const cGH* restrict const cctkGH, const int d
   }
   
   const CCTK_REAL* restrict jacobian_ptrs[9];
-  if (use_jacobian) GenericFD_GroupDataPointers(cctkGH, jacobian_group,
+  if (use_jacobian) GroupDataPointers(cctkGH, jacobian_group,
                                                 9, jacobian_ptrs);
   
   const CCTK_REAL* restrict const J11 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_ptrs[0] : 0;
@@ -341,13 +342,13 @@ static void ML_BSSN_DGFE_RHS2_Body(const cGH* restrict const cctkGH, const int d
   const CCTK_REAL* restrict const J33 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_ptrs[8] : 0;
   
   const CCTK_REAL* restrict jacobian_determinant_ptrs[1] CCTK_ATTRIBUTE_UNUSED;
-  if (use_jacobian && strlen(jacobian_determinant_group) > 0) GenericFD_GroupDataPointers(cctkGH, jacobian_determinant_group,
+  if (use_jacobian && strlen(jacobian_determinant_group) > 0) GroupDataPointers(cctkGH, jacobian_determinant_group,
                                                 1, jacobian_determinant_ptrs);
   
   const CCTK_REAL* restrict const detJ CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_ptrs[0] : 0;
   
   const CCTK_REAL* restrict jacobian_inverse_ptrs[9] CCTK_ATTRIBUTE_UNUSED;
-  if (use_jacobian && strlen(jacobian_inverse_group) > 0) GenericFD_GroupDataPointers(cctkGH, jacobian_inverse_group,
+  if (use_jacobian && strlen(jacobian_inverse_group) > 0) GroupDataPointers(cctkGH, jacobian_inverse_group,
                                                 9, jacobian_inverse_ptrs);
   
   const CCTK_REAL* restrict const iJ11 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_inverse_ptrs[0] : 0;
@@ -361,8 +362,8 @@ static void ML_BSSN_DGFE_RHS2_Body(const cGH* restrict const cctkGH, const int d
   const CCTK_REAL* restrict const iJ33 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_inverse_ptrs[8] : 0;
   
   const CCTK_REAL* restrict jacobian_derivative_ptrs[18] CCTK_ATTRIBUTE_UNUSED;
-  if (use_jacobian) GenericFD_GroupDataPointers(cctkGH, jacobian_derivative_group,
-                                                18, jacobian_derivative_ptrs);
+  if (use_jacobian) GroupDataPointers(cctkGH, jacobian_derivative_group,
+                                      18, jacobian_derivative_ptrs);
   
   const CCTK_REAL* restrict const dJ111 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_derivative_ptrs[0] : 0;
   const CCTK_REAL* restrict const dJ112 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_derivative_ptrs[1] : 0;
@@ -1856,19 +1857,19 @@ extern "C" void ML_BSSN_DGFE_RHS2(CCTK_ARGUMENTS)
     "ML_BSSN_DGFE::ML_metric",
     "ML_BSSN_DGFE::ML_shift",
     "ML_BSSN_DGFE::ML_trace_curv"};
-  GenericFD_AssertGroupStorage(cctkGH, "ML_BSSN_DGFE_RHS2", 8, groups);
+  AssertGroupStorage(cctkGH, "ML_BSSN_DGFE_RHS2", 8, groups);
   
   switch (fdOrder)
   {
     case 2:
     {
-      GenericFD_EnsureStencilFits(cctkGH, "ML_BSSN_DGFE_RHS2", 1, 1, 1);
+      EnsureStencilFits(cctkGH, "ML_BSSN_DGFE_RHS2", 1, 1, 1);
       break;
     }
     
     case 4:
     {
-      GenericFD_EnsureStencilFits(cctkGH, "ML_BSSN_DGFE_RHS2", 2, 2, 2);
+      EnsureStencilFits(cctkGH, "ML_BSSN_DGFE_RHS2", 2, 2, 2);
       break;
     }
     default:
@@ -1877,9 +1878,11 @@ extern "C" void ML_BSSN_DGFE_RHS2(CCTK_ARGUMENTS)
   
   
   if (not solver) solver = new ML_BSSN_DGFE_RHS2_method(cctkGH);
-  GenericFD_LoopOverInterior(cctkGH, ML_BSSN_DGFE_RHS2_Body);
+  LoopOverInterior(cctkGH, ML_BSSN_DGFE_RHS2_Body);
   if (verbose > 1)
   {
     CCTK_VInfo(CCTK_THORNSTRING,"Leaving ML_BSSN_DGFE_RHS2_Body");
   }
 }
+
+} // namespace ML_BSSN_DGFE

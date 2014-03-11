@@ -11,10 +11,9 @@
 #include "cctk.h"
 #include "cctk_Arguments.h"
 #include "cctk_Parameters.h"
-#include "GenericFD.h"
+#include "Kranc.hh"
 #include "Differencing.h"
 #include "loopcontrol.h"
-#include "Kranc.hh"
 
 /* Define macros used in calculations */
 #define INITVALUE (42)
@@ -22,6 +21,8 @@
 #define SQR(x) ((x) * (x))
 #define CUB(x) ((x) * SQR(x))
 #define QAD(x) (SQR(SQR(x)))
+
+namespace TilingTest {
 
 
 static void initial_sine_Body(const cGH* restrict const cctkGH, const KrancData & restrict kd)
@@ -124,12 +125,14 @@ extern "C" void initial_sine(CCTK_ARGUMENTS)
   const char* const groups[] = {
     "TilingTest::evolved_group",
     "grid::coordinates"};
-  GenericFD_AssertGroupStorage(cctkGH, "initial_sine", 2, groups);
+  AssertGroupStorage(cctkGH, "initial_sine", 2, groups);
   
   
-  TilingTest_TiledLoopOverEverything(cctkGH, initial_sine_Body);
+  TiledLoopOverEverything(cctkGH, initial_sine_Body);
   if (verbose > 1)
   {
     CCTK_VInfo(CCTK_THORNSTRING,"Leaving initial_sine_Body");
   }
 }
+
+} // namespace TilingTest
