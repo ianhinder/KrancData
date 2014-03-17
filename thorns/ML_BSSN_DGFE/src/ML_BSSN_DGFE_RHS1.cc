@@ -17,9 +17,6 @@
 #include "hrscc.hh"
 #include "vectors.h"
 
-/* Define macros used in calculations */
-#define INITVALUE (42)
-
 namespace ML_BSSN_DGFE {
 
 extern "C" void ML_BSSN_DGFE_RHS1_SelectBCs(CCTK_ARGUMENTS)

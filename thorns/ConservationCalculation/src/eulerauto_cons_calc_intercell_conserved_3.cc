@@ -15,13 +15,6 @@
 #include "Differencing.h"
 #include "loopcontrol.h"
 
-/* Define macros used in calculations */
-#define INITVALUE (42)
-#define INV(x) ((CCTK_REAL)1.0 / (x))
-#define SQR(x) ((x) * (x))
-#define CUB(x) ((x) * SQR(x))
-#define QAD(x) (SQR(SQR(x)))
-
 namespace ConservationCalculation {
 
 
@@ -57,9 +50,9 @@ static void eulerauto_cons_calc_intercell_conserved_3_Body(const cGH* restrict c
     ToReal(CCTK_DELTA_SPACE(1));
   const CCTK_REAL dz CCTK_ATTRIBUTE_UNUSED = 
     ToReal(CCTK_DELTA_SPACE(2));
-  const CCTK_REAL dxi CCTK_ATTRIBUTE_UNUSED = INV(dx);
-  const CCTK_REAL dyi CCTK_ATTRIBUTE_UNUSED = INV(dy);
-  const CCTK_REAL dzi CCTK_ATTRIBUTE_UNUSED = INV(dz);
+  const CCTK_REAL dxi CCTK_ATTRIBUTE_UNUSED = pow(dx,-1);
+  const CCTK_REAL dyi CCTK_ATTRIBUTE_UNUSED = pow(dy,-1);
+  const CCTK_REAL dzi CCTK_ATTRIBUTE_UNUSED = pow(dz,-1);
   const CCTK_REAL khalf CCTK_ATTRIBUTE_UNUSED = 0.5;
   const CCTK_REAL kthird CCTK_ATTRIBUTE_UNUSED = 
     0.333333333333333333333333333333;
@@ -72,9 +65,9 @@ static void eulerauto_cons_calc_intercell_conserved_3_Body(const cGH* restrict c
   const CCTK_REAL hdzi CCTK_ATTRIBUTE_UNUSED = 0.5*dzi;
   /* Initialize predefined quantities */
   const CCTK_REAL p1o1 CCTK_ATTRIBUTE_UNUSED = 1;
-  const CCTK_REAL p1odx CCTK_ATTRIBUTE_UNUSED = INV(dx);
-  const CCTK_REAL p1ody CCTK_ATTRIBUTE_UNUSED = INV(dy);
-  const CCTK_REAL p1odz CCTK_ATTRIBUTE_UNUSED = INV(dz);
+  const CCTK_REAL p1odx CCTK_ATTRIBUTE_UNUSED = pow(dx,-1);
+  const CCTK_REAL p1ody CCTK_ATTRIBUTE_UNUSED = pow(dy,-1);
+  const CCTK_REAL p1odz CCTK_ATTRIBUTE_UNUSED = pow(dz,-1);
   /* Assign local copies of arrays functions */
   
   
@@ -117,8 +110,8 @@ static void eulerauto_cons_calc_intercell_conserved_3_Body(const cGH* restrict c
     
     CCTK_REAL S3LeftL CCTK_ATTRIBUTE_UNUSED = rhoLeftL*v3LeftL;
     
-    CCTK_REAL EnLeftL CCTK_ATTRIBUTE_UNUSED = pLeftL*INV(-1 + gamma) + 
-      0.5*rhoLeftL*(SQR(v1LeftL) + SQR(v2LeftL) + SQR(v3LeftL));
+    CCTK_REAL EnLeftL CCTK_ATTRIBUTE_UNUSED = 0.5*rhoLeftL*(pow(v1LeftL,2) 
+      + pow(v2LeftL,2) + pow(v3LeftL,2)) + pLeftL*pow(-1 + gamma,-1);
     
     CCTK_REAL DenRightL CCTK_ATTRIBUTE_UNUSED = rhoRightL;
     
@@ -128,8 +121,9 @@ static void eulerauto_cons_calc_intercell_conserved_3_Body(const cGH* restrict c
     
     CCTK_REAL S3RightL CCTK_ATTRIBUTE_UNUSED = rhoRightL*v3RightL;
     
-    CCTK_REAL EnRightL CCTK_ATTRIBUTE_UNUSED = pRightL*INV(-1 + gamma) + 
-      0.5*rhoRightL*(SQR(v1RightL) + SQR(v2RightL) + SQR(v3RightL));
+    CCTK_REAL EnRightL CCTK_ATTRIBUTE_UNUSED = 
+      0.5*rhoRightL*(pow(v1RightL,2) + pow(v2RightL,2) + pow(v3RightL,2)) + 
+      pRightL*pow(-1 + gamma,-1);
     /* Copy local copies back to grid functions */
     DenLeft[index] = DenLeftL;
     DenRight[index] = DenRightL;

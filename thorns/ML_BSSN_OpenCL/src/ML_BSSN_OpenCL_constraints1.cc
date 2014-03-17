@@ -17,9 +17,6 @@
 #include "OpenCLRunTime.h"
 #include "vectors.h"
 
-/* Define macros used in calculations */
-#define INITVALUE (42)
-
 namespace ML_BSSN_OpenCL {
 
 extern "C" void ML_BSSN_OpenCL_constraints1_SelectBCs(CCTK_ARGUMENTS)

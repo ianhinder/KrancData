@@ -15,13 +15,6 @@
 #include "Differencing.h"
 #include "loopcontrol.h"
 
-/* Define macros used in calculations */
-#define INITVALUE (42)
-#define INV(x) ((CCTK_REAL)1.0 / (x))
-#define SQR(x) ((x) * (x))
-#define CUB(x) ((x) * SQR(x))
-#define QAD(x) (SQR(SQR(x)))
-
 namespace GFOffset {
 
 
@@ -57,9 +50,9 @@ static void initial_sine_Body(const cGH* restrict const cctkGH, const int dir, c
     ToReal(CCTK_DELTA_SPACE(1));
   const CCTK_REAL dz CCTK_ATTRIBUTE_UNUSED = 
     ToReal(CCTK_DELTA_SPACE(2));
-  const CCTK_REAL dxi CCTK_ATTRIBUTE_UNUSED = INV(dx);
-  const CCTK_REAL dyi CCTK_ATTRIBUTE_UNUSED = INV(dy);
-  const CCTK_REAL dzi CCTK_ATTRIBUTE_UNUSED = INV(dz);
+  const CCTK_REAL dxi CCTK_ATTRIBUTE_UNUSED = pow(dx,-1);
+  const CCTK_REAL dyi CCTK_ATTRIBUTE_UNUSED = pow(dy,-1);
+  const CCTK_REAL dzi CCTK_ATTRIBUTE_UNUSED = pow(dz,-1);
   const CCTK_REAL khalf CCTK_ATTRIBUTE_UNUSED = 0.5;
   const CCTK_REAL kthird CCTK_ATTRIBUTE_UNUSED = 
     0.333333333333333333333333333333;
@@ -71,12 +64,12 @@ static void initial_sine_Body(const cGH* restrict const cctkGH, const int dir, c
   const CCTK_REAL hdyi CCTK_ATTRIBUTE_UNUSED = 0.5*dyi;
   const CCTK_REAL hdzi CCTK_ATTRIBUTE_UNUSED = 0.5*dzi;
   /* Initialize predefined quantities */
-  const CCTK_REAL p1o2dx CCTK_ATTRIBUTE_UNUSED = 0.5*INV(dx);
-  const CCTK_REAL p1o2dy CCTK_ATTRIBUTE_UNUSED = 0.5*INV(dy);
-  const CCTK_REAL p1o2dz CCTK_ATTRIBUTE_UNUSED = 0.5*INV(dz);
-  const CCTK_REAL p1odx2 CCTK_ATTRIBUTE_UNUSED = INV(SQR(dx));
-  const CCTK_REAL p1ody2 CCTK_ATTRIBUTE_UNUSED = INV(SQR(dy));
-  const CCTK_REAL p1odz2 CCTK_ATTRIBUTE_UNUSED = INV(SQR(dz));
+  const CCTK_REAL p1o2dx CCTK_ATTRIBUTE_UNUSED = 0.5*pow(dx,-1);
+  const CCTK_REAL p1o2dy CCTK_ATTRIBUTE_UNUSED = 0.5*pow(dy,-1);
+  const CCTK_REAL p1o2dz CCTK_ATTRIBUTE_UNUSED = 0.5*pow(dz,-1);
+  const CCTK_REAL p1odx2 CCTK_ATTRIBUTE_UNUSED = pow(dx,-2);
+  const CCTK_REAL p1ody2 CCTK_ATTRIBUTE_UNUSED = pow(dy,-2);
+  const CCTK_REAL p1odz2 CCTK_ATTRIBUTE_UNUSED = pow(dz,-2);
   /* Assign local copies of arrays functions */
   
   

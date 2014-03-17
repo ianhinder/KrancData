@@ -15,13 +15,6 @@
 #include "Differencing.h"
 #include "loopcontrol.h"
 
-/* Define macros used in calculations */
-#define INITVALUE (42)
-#define INV(x) ((CCTK_REAL)1.0 / (x))
-#define SQR(x) ((x) * (x))
-#define CUB(x) ((x) * SQR(x))
-#define QAD(x) (SQR(SQR(x)))
-
 namespace ConservationCalculation {
 
 extern "C" void eulerauto_cons_calc_flux_3_SelectBCs(CCTK_ARGUMENTS)
@@ -82,9 +75,9 @@ static void eulerauto_cons_calc_flux_3_Body(const cGH* restrict const cctkGH, co
     ToReal(CCTK_DELTA_SPACE(1));
   const CCTK_REAL dz CCTK_ATTRIBUTE_UNUSED = 
     ToReal(CCTK_DELTA_SPACE(2));
-  const CCTK_REAL dxi CCTK_ATTRIBUTE_UNUSED = INV(dx);
-  const CCTK_REAL dyi CCTK_ATTRIBUTE_UNUSED = INV(dy);
-  const CCTK_REAL dzi CCTK_ATTRIBUTE_UNUSED = INV(dz);
+  const CCTK_REAL dxi CCTK_ATTRIBUTE_UNUSED = pow(dx,-1);
+  const CCTK_REAL dyi CCTK_ATTRIBUTE_UNUSED = pow(dy,-1);
+  const CCTK_REAL dzi CCTK_ATTRIBUTE_UNUSED = pow(dz,-1);
   const CCTK_REAL khalf CCTK_ATTRIBUTE_UNUSED = 0.5;
   const CCTK_REAL kthird CCTK_ATTRIBUTE_UNUSED = 
     0.333333333333333333333333333333;
@@ -97,9 +90,9 @@ static void eulerauto_cons_calc_flux_3_Body(const cGH* restrict const cctkGH, co
   const CCTK_REAL hdzi CCTK_ATTRIBUTE_UNUSED = 0.5*dzi;
   /* Initialize predefined quantities */
   const CCTK_REAL p1o1 CCTK_ATTRIBUTE_UNUSED = 1;
-  const CCTK_REAL p1odx CCTK_ATTRIBUTE_UNUSED = INV(dx);
-  const CCTK_REAL p1ody CCTK_ATTRIBUTE_UNUSED = INV(dy);
-  const CCTK_REAL p1odz CCTK_ATTRIBUTE_UNUSED = INV(dz);
+  const CCTK_REAL p1odx CCTK_ATTRIBUTE_UNUSED = pow(dx,-1);
+  const CCTK_REAL p1ody CCTK_ATTRIBUTE_UNUSED = pow(dy,-1);
+  const CCTK_REAL p1odz CCTK_ATTRIBUTE_UNUSED = pow(dz,-1);
   /* Assign local copies of arrays functions */
   
   
@@ -179,10 +172,10 @@ static void eulerauto_cons_calc_flux_3_Body(const cGH* restrict const cctkGH, co
       S2FluxRight + hlleAlpha*(-S2LeftL + ShiftMinus3S2Right));
     
     CCTK_REAL S3FluxLeft CCTK_ATTRIBUTE_UNUSED = pLeftL + 
-      rhoLeftL*SQR(v3LeftL);
+      rhoLeftL*pow(v3LeftL,2);
     
     CCTK_REAL S3FluxRight CCTK_ATTRIBUTE_UNUSED = ShiftMinus3pRight + 
-      ShiftMinus3rhoRight*SQR(ShiftMinus3v3Right);
+      ShiftMinus3rhoRight*pow(ShiftMinus3v3Right,2);
     
     CCTK_REAL S3FluxL CCTK_ATTRIBUTE_UNUSED = 0.5*(S3FluxLeft + 
       S3FluxRight + hlleAlpha*(-S3LeftL + ShiftMinus3S3Right));

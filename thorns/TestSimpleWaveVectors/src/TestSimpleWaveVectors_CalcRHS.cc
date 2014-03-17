@@ -16,9 +16,6 @@
 #include "loopcontrol.h"
 #include "vectors.h"
 
-/* Define macros used in calculations */
-#define INITVALUE (42)
-
 namespace TestSimpleWaveVectors {
 
 extern "C" void TestSimpleWaveVectors_CalcRHS_SelectBCs(CCTK_ARGUMENTS)

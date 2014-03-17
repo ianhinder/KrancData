@@ -16,9 +16,6 @@
 #include "loopcontrol.h"
 #include "vectors.h"
 
-/* Define macros used in calculations */
-#define INITVALUE (42)
-
 namespace ML_BSSN {
 
 extern "C" void ML_BSSN_RHS2_SelectBCs(CCTK_ARGUMENTS)

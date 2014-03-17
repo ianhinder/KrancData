@@ -15,13 +15,6 @@
 #include "Differencing.h"
 #include "loopcontrol.h"
 
-/* Define macros used in calculations */
-#define INITVALUE (42)
-#define INV(x) ((CCTK_REAL)1.0 / (x))
-#define SQR(x) ((x) * (x))
-#define CUB(x) ((x) * SQR(x))
-#define QAD(x) (SQR(SQR(x)))
-
 namespace ML_BSSN_NoVec {
 
 extern "C" void ML_BSSN_NoVec_RHS1_SelectBCs(CCTK_ARGUMENTS)
@@ -91,9 +84,9 @@ static void ML_BSSN_NoVec_RHS1_Body(const cGH* restrict const cctkGH, const int 
     ToReal(CCTK_DELTA_SPACE(1));
   const CCTK_REAL dz CCTK_ATTRIBUTE_UNUSED = 
     ToReal(CCTK_DELTA_SPACE(2));
-  const CCTK_REAL dxi CCTK_ATTRIBUTE_UNUSED = INV(dx);
-  const CCTK_REAL dyi CCTK_ATTRIBUTE_UNUSED = INV(dy);
-  const CCTK_REAL dzi CCTK_ATTRIBUTE_UNUSED = INV(dz);
+  const CCTK_REAL dxi CCTK_ATTRIBUTE_UNUSED = pow(dx,-1);
+  const CCTK_REAL dyi CCTK_ATTRIBUTE_UNUSED = pow(dy,-1);
+  const CCTK_REAL dzi CCTK_ATTRIBUTE_UNUSED = pow(dz,-1);
   const CCTK_REAL khalf CCTK_ATTRIBUTE_UNUSED = 0.5;
   const CCTK_REAL kthird CCTK_ATTRIBUTE_UNUSED = 
     0.333333333333333333333333333333;
@@ -105,45 +98,45 @@ static void ML_BSSN_NoVec_RHS1_Body(const cGH* restrict const cctkGH, const int 
   const CCTK_REAL hdyi CCTK_ATTRIBUTE_UNUSED = 0.5*dyi;
   const CCTK_REAL hdzi CCTK_ATTRIBUTE_UNUSED = 0.5*dzi;
   /* Initialize predefined quantities */
-  const CCTK_REAL p1o12dx CCTK_ATTRIBUTE_UNUSED = 0.0833333333333333333333333333333*INV(dx);
-  const CCTK_REAL p1o12dy CCTK_ATTRIBUTE_UNUSED = 0.0833333333333333333333333333333*INV(dy);
-  const CCTK_REAL p1o12dz CCTK_ATTRIBUTE_UNUSED = 0.0833333333333333333333333333333*INV(dz);
-  const CCTK_REAL p1o144dxdy CCTK_ATTRIBUTE_UNUSED = 0.00694444444444444444444444444444*INV(dx*dy);
-  const CCTK_REAL p1o144dxdz CCTK_ATTRIBUTE_UNUSED = 0.00694444444444444444444444444444*INV(dx*dz);
-  const CCTK_REAL p1o144dydz CCTK_ATTRIBUTE_UNUSED = 0.00694444444444444444444444444444*INV(dy*dz);
-  const CCTK_REAL p1o24dx CCTK_ATTRIBUTE_UNUSED = 0.0416666666666666666666666666667*INV(dx);
-  const CCTK_REAL p1o24dy CCTK_ATTRIBUTE_UNUSED = 0.0416666666666666666666666666667*INV(dy);
-  const CCTK_REAL p1o24dz CCTK_ATTRIBUTE_UNUSED = 0.0416666666666666666666666666667*INV(dz);
-  const CCTK_REAL p1o2dx CCTK_ATTRIBUTE_UNUSED = 0.5*INV(dx);
-  const CCTK_REAL p1o2dy CCTK_ATTRIBUTE_UNUSED = 0.5*INV(dy);
-  const CCTK_REAL p1o2dz CCTK_ATTRIBUTE_UNUSED = 0.5*INV(dz);
-  const CCTK_REAL p1o4dx CCTK_ATTRIBUTE_UNUSED = 0.25*INV(dx);
-  const CCTK_REAL p1o4dxdy CCTK_ATTRIBUTE_UNUSED = 0.25*INV(dx*dy);
-  const CCTK_REAL p1o4dxdz CCTK_ATTRIBUTE_UNUSED = 0.25*INV(dx*dz);
-  const CCTK_REAL p1o4dy CCTK_ATTRIBUTE_UNUSED = 0.25*INV(dy);
-  const CCTK_REAL p1o4dydz CCTK_ATTRIBUTE_UNUSED = 0.25*INV(dy*dz);
-  const CCTK_REAL p1o4dz CCTK_ATTRIBUTE_UNUSED = 0.25*INV(dz);
-  const CCTK_REAL p1o64dx CCTK_ATTRIBUTE_UNUSED = 0.015625*INV(dx);
-  const CCTK_REAL p1o64dy CCTK_ATTRIBUTE_UNUSED = 0.015625*INV(dy);
-  const CCTK_REAL p1o64dz CCTK_ATTRIBUTE_UNUSED = 0.015625*INV(dz);
-  const CCTK_REAL p1odx CCTK_ATTRIBUTE_UNUSED = INV(dx);
-  const CCTK_REAL p1odx2 CCTK_ATTRIBUTE_UNUSED = INV(SQR(dx));
-  const CCTK_REAL p1ody CCTK_ATTRIBUTE_UNUSED = INV(dy);
-  const CCTK_REAL p1ody2 CCTK_ATTRIBUTE_UNUSED = INV(SQR(dy));
-  const CCTK_REAL p1odz CCTK_ATTRIBUTE_UNUSED = INV(dz);
-  const CCTK_REAL p1odz2 CCTK_ATTRIBUTE_UNUSED = INV(SQR(dz));
-  const CCTK_REAL pm1o12dx2 CCTK_ATTRIBUTE_UNUSED = -0.0833333333333333333333333333333*INV(SQR(dx));
-  const CCTK_REAL pm1o12dy2 CCTK_ATTRIBUTE_UNUSED = -0.0833333333333333333333333333333*INV(SQR(dy));
-  const CCTK_REAL pm1o12dz2 CCTK_ATTRIBUTE_UNUSED = -0.0833333333333333333333333333333*INV(SQR(dz));
-  const CCTK_REAL pm1o16dx CCTK_ATTRIBUTE_UNUSED = -0.0625*INV(dx);
-  const CCTK_REAL pm1o16dy CCTK_ATTRIBUTE_UNUSED = -0.0625*INV(dy);
-  const CCTK_REAL pm1o16dz CCTK_ATTRIBUTE_UNUSED = -0.0625*INV(dz);
-  const CCTK_REAL pm1o2dx CCTK_ATTRIBUTE_UNUSED = -0.5*INV(dx);
-  const CCTK_REAL pm1o2dy CCTK_ATTRIBUTE_UNUSED = -0.5*INV(dy);
-  const CCTK_REAL pm1o2dz CCTK_ATTRIBUTE_UNUSED = -0.5*INV(dz);
-  const CCTK_REAL pm1o4dx CCTK_ATTRIBUTE_UNUSED = -0.25*INV(dx);
-  const CCTK_REAL pm1o4dy CCTK_ATTRIBUTE_UNUSED = -0.25*INV(dy);
-  const CCTK_REAL pm1o4dz CCTK_ATTRIBUTE_UNUSED = -0.25*INV(dz);
+  const CCTK_REAL p1o12dx CCTK_ATTRIBUTE_UNUSED = 0.0833333333333333333333333333333*pow(dx,-1);
+  const CCTK_REAL p1o12dy CCTK_ATTRIBUTE_UNUSED = 0.0833333333333333333333333333333*pow(dy,-1);
+  const CCTK_REAL p1o12dz CCTK_ATTRIBUTE_UNUSED = 0.0833333333333333333333333333333*pow(dz,-1);
+  const CCTK_REAL p1o144dxdy CCTK_ATTRIBUTE_UNUSED = 0.00694444444444444444444444444444*pow(dx,-1)*pow(dy,-1);
+  const CCTK_REAL p1o144dxdz CCTK_ATTRIBUTE_UNUSED = 0.00694444444444444444444444444444*pow(dx,-1)*pow(dz,-1);
+  const CCTK_REAL p1o144dydz CCTK_ATTRIBUTE_UNUSED = 0.00694444444444444444444444444444*pow(dy,-1)*pow(dz,-1);
+  const CCTK_REAL p1o24dx CCTK_ATTRIBUTE_UNUSED = 0.0416666666666666666666666666667*pow(dx,-1);
+  const CCTK_REAL p1o24dy CCTK_ATTRIBUTE_UNUSED = 0.0416666666666666666666666666667*pow(dy,-1);
+  const CCTK_REAL p1o24dz CCTK_ATTRIBUTE_UNUSED = 0.0416666666666666666666666666667*pow(dz,-1);
+  const CCTK_REAL p1o2dx CCTK_ATTRIBUTE_UNUSED = 0.5*pow(dx,-1);
+  const CCTK_REAL p1o2dy CCTK_ATTRIBUTE_UNUSED = 0.5*pow(dy,-1);
+  const CCTK_REAL p1o2dz CCTK_ATTRIBUTE_UNUSED = 0.5*pow(dz,-1);
+  const CCTK_REAL p1o4dx CCTK_ATTRIBUTE_UNUSED = 0.25*pow(dx,-1);
+  const CCTK_REAL p1o4dxdy CCTK_ATTRIBUTE_UNUSED = 0.25*pow(dx,-1)*pow(dy,-1);
+  const CCTK_REAL p1o4dxdz CCTK_ATTRIBUTE_UNUSED = 0.25*pow(dx,-1)*pow(dz,-1);
+  const CCTK_REAL p1o4dy CCTK_ATTRIBUTE_UNUSED = 0.25*pow(dy,-1);
+  const CCTK_REAL p1o4dydz CCTK_ATTRIBUTE_UNUSED = 0.25*pow(dy,-1)*pow(dz,-1);
+  const CCTK_REAL p1o4dz CCTK_ATTRIBUTE_UNUSED = 0.25*pow(dz,-1);
+  const CCTK_REAL p1o64dx CCTK_ATTRIBUTE_UNUSED = 0.015625*pow(dx,-1);
+  const CCTK_REAL p1o64dy CCTK_ATTRIBUTE_UNUSED = 0.015625*pow(dy,-1);
+  const CCTK_REAL p1o64dz CCTK_ATTRIBUTE_UNUSED = 0.015625*pow(dz,-1);
+  const CCTK_REAL p1odx CCTK_ATTRIBUTE_UNUSED = pow(dx,-1);
+  const CCTK_REAL p1odx2 CCTK_ATTRIBUTE_UNUSED = pow(dx,-2);
+  const CCTK_REAL p1ody CCTK_ATTRIBUTE_UNUSED = pow(dy,-1);
+  const CCTK_REAL p1ody2 CCTK_ATTRIBUTE_UNUSED = pow(dy,-2);
+  const CCTK_REAL p1odz CCTK_ATTRIBUTE_UNUSED = pow(dz,-1);
+  const CCTK_REAL p1odz2 CCTK_ATTRIBUTE_UNUSED = pow(dz,-2);
+  const CCTK_REAL pm1o12dx2 CCTK_ATTRIBUTE_UNUSED = -0.0833333333333333333333333333333*pow(dx,-2);
+  const CCTK_REAL pm1o12dy2 CCTK_ATTRIBUTE_UNUSED = -0.0833333333333333333333333333333*pow(dy,-2);
+  const CCTK_REAL pm1o12dz2 CCTK_ATTRIBUTE_UNUSED = -0.0833333333333333333333333333333*pow(dz,-2);
+  const CCTK_REAL pm1o16dx CCTK_ATTRIBUTE_UNUSED = -0.0625*pow(dx,-1);
+  const CCTK_REAL pm1o16dy CCTK_ATTRIBUTE_UNUSED = -0.0625*pow(dy,-1);
+  const CCTK_REAL pm1o16dz CCTK_ATTRIBUTE_UNUSED = -0.0625*pow(dz,-1);
+  const CCTK_REAL pm1o2dx CCTK_ATTRIBUTE_UNUSED = -0.5*pow(dx,-1);
+  const CCTK_REAL pm1o2dy CCTK_ATTRIBUTE_UNUSED = -0.5*pow(dy,-1);
+  const CCTK_REAL pm1o2dz CCTK_ATTRIBUTE_UNUSED = -0.5*pow(dz,-1);
+  const CCTK_REAL pm1o4dx CCTK_ATTRIBUTE_UNUSED = -0.25*pow(dx,-1);
+  const CCTK_REAL pm1o4dy CCTK_ATTRIBUTE_UNUSED = -0.25*pow(dy,-1);
+  const CCTK_REAL pm1o4dz CCTK_ATTRIBUTE_UNUSED = -0.25*pow(dz,-1);
   /* Jacobian variable pointers */
   const bool usejacobian1 = (!CCTK_IsFunctionAliased("MultiPatch_GetMap") || MultiPatch_GetMap(cctkGH) != jacobian_identity_map)
                         && strlen(jacobian_group) > 0;
@@ -707,74 +700,74 @@ static void ML_BSSN_NoVec_RHS1_Body(const cGH* restrict const cctkGH, const int 
       JacPDstandardNth11alpha = 2*J11L*J21L*PDstandardNth12alpha + 
         2*J11L*J31L*PDstandardNth13alpha + dJ111L*PDstandardNth1alpha + 
         2*J21L*J31L*PDstandardNth23alpha + dJ211L*PDstandardNth2alpha + 
-        dJ311L*PDstandardNth3alpha + PDstandardNth11alpha*SQR(J11L) + 
-        PDstandardNth22alpha*SQR(J21L) + PDstandardNth33alpha*SQR(J31L);
+        dJ311L*PDstandardNth3alpha + PDstandardNth11alpha*pow(J11L,2) + 
+        PDstandardNth22alpha*pow(J21L,2) + PDstandardNth33alpha*pow(J31L,2);
       
       JacPDstandardNth11beta1 = 2*J11L*J21L*PDstandardNth12beta1 + 
         2*J11L*J31L*PDstandardNth13beta1 + dJ111L*PDstandardNth1beta1 + 
         2*J21L*J31L*PDstandardNth23beta1 + dJ211L*PDstandardNth2beta1 + 
-        dJ311L*PDstandardNth3beta1 + PDstandardNth11beta1*SQR(J11L) + 
-        PDstandardNth22beta1*SQR(J21L) + PDstandardNth33beta1*SQR(J31L);
+        dJ311L*PDstandardNth3beta1 + PDstandardNth11beta1*pow(J11L,2) + 
+        PDstandardNth22beta1*pow(J21L,2) + PDstandardNth33beta1*pow(J31L,2);
       
       JacPDstandardNth11beta2 = 2*J11L*J21L*PDstandardNth12beta2 + 
         2*J11L*J31L*PDstandardNth13beta2 + dJ111L*PDstandardNth1beta2 + 
         2*J21L*J31L*PDstandardNth23beta2 + dJ211L*PDstandardNth2beta2 + 
-        dJ311L*PDstandardNth3beta2 + PDstandardNth11beta2*SQR(J11L) + 
-        PDstandardNth22beta2*SQR(J21L) + PDstandardNth33beta2*SQR(J31L);
+        dJ311L*PDstandardNth3beta2 + PDstandardNth11beta2*pow(J11L,2) + 
+        PDstandardNth22beta2*pow(J21L,2) + PDstandardNth33beta2*pow(J31L,2);
       
       JacPDstandardNth11beta3 = 2*J11L*J21L*PDstandardNth12beta3 + 
         2*J11L*J31L*PDstandardNth13beta3 + dJ111L*PDstandardNth1beta3 + 
         2*J21L*J31L*PDstandardNth23beta3 + dJ211L*PDstandardNth2beta3 + 
-        dJ311L*PDstandardNth3beta3 + PDstandardNth11beta3*SQR(J11L) + 
-        PDstandardNth22beta3*SQR(J21L) + PDstandardNth33beta3*SQR(J31L);
+        dJ311L*PDstandardNth3beta3 + PDstandardNth11beta3*pow(J11L,2) + 
+        PDstandardNth22beta3*pow(J21L,2) + PDstandardNth33beta3*pow(J31L,2);
       
       JacPDstandardNth22alpha = 2*J12L*J22L*PDstandardNth12alpha + 
         2*J12L*J32L*PDstandardNth13alpha + dJ122L*PDstandardNth1alpha + 
         2*J22L*J32L*PDstandardNth23alpha + dJ222L*PDstandardNth2alpha + 
-        dJ322L*PDstandardNth3alpha + PDstandardNth11alpha*SQR(J12L) + 
-        PDstandardNth22alpha*SQR(J22L) + PDstandardNth33alpha*SQR(J32L);
+        dJ322L*PDstandardNth3alpha + PDstandardNth11alpha*pow(J12L,2) + 
+        PDstandardNth22alpha*pow(J22L,2) + PDstandardNth33alpha*pow(J32L,2);
       
       JacPDstandardNth22beta1 = 2*J12L*J22L*PDstandardNth12beta1 + 
         2*J12L*J32L*PDstandardNth13beta1 + dJ122L*PDstandardNth1beta1 + 
         2*J22L*J32L*PDstandardNth23beta1 + dJ222L*PDstandardNth2beta1 + 
-        dJ322L*PDstandardNth3beta1 + PDstandardNth11beta1*SQR(J12L) + 
-        PDstandardNth22beta1*SQR(J22L) + PDstandardNth33beta1*SQR(J32L);
+        dJ322L*PDstandardNth3beta1 + PDstandardNth11beta1*pow(J12L,2) + 
+        PDstandardNth22beta1*pow(J22L,2) + PDstandardNth33beta1*pow(J32L,2);
       
       JacPDstandardNth22beta2 = 2*J12L*J22L*PDstandardNth12beta2 + 
         2*J12L*J32L*PDstandardNth13beta2 + dJ122L*PDstandardNth1beta2 + 
         2*J22L*J32L*PDstandardNth23beta2 + dJ222L*PDstandardNth2beta2 + 
-        dJ322L*PDstandardNth3beta2 + PDstandardNth11beta2*SQR(J12L) + 
-        PDstandardNth22beta2*SQR(J22L) + PDstandardNth33beta2*SQR(J32L);
+        dJ322L*PDstandardNth3beta2 + PDstandardNth11beta2*pow(J12L,2) + 
+        PDstandardNth22beta2*pow(J22L,2) + PDstandardNth33beta2*pow(J32L,2);
       
       JacPDstandardNth22beta3 = 2*J12L*J22L*PDstandardNth12beta3 + 
         2*J12L*J32L*PDstandardNth13beta3 + dJ122L*PDstandardNth1beta3 + 
         2*J22L*J32L*PDstandardNth23beta3 + dJ222L*PDstandardNth2beta3 + 
-        dJ322L*PDstandardNth3beta3 + PDstandardNth11beta3*SQR(J12L) + 
-        PDstandardNth22beta3*SQR(J22L) + PDstandardNth33beta3*SQR(J32L);
+        dJ322L*PDstandardNth3beta3 + PDstandardNth11beta3*pow(J12L,2) + 
+        PDstandardNth22beta3*pow(J22L,2) + PDstandardNth33beta3*pow(J32L,2);
       
       JacPDstandardNth33alpha = 2*J13L*J23L*PDstandardNth12alpha + 
         2*J13L*J33L*PDstandardNth13alpha + dJ133L*PDstandardNth1alpha + 
         2*J23L*J33L*PDstandardNth23alpha + dJ233L*PDstandardNth2alpha + 
-        dJ333L*PDstandardNth3alpha + PDstandardNth11alpha*SQR(J13L) + 
-        PDstandardNth22alpha*SQR(J23L) + PDstandardNth33alpha*SQR(J33L);
+        dJ333L*PDstandardNth3alpha + PDstandardNth11alpha*pow(J13L,2) + 
+        PDstandardNth22alpha*pow(J23L,2) + PDstandardNth33alpha*pow(J33L,2);
       
       JacPDstandardNth33beta1 = 2*J13L*J23L*PDstandardNth12beta1 + 
         2*J13L*J33L*PDstandardNth13beta1 + dJ133L*PDstandardNth1beta1 + 
         2*J23L*J33L*PDstandardNth23beta1 + dJ233L*PDstandardNth2beta1 + 
-        dJ333L*PDstandardNth3beta1 + PDstandardNth11beta1*SQR(J13L) + 
-        PDstandardNth22beta1*SQR(J23L) + PDstandardNth33beta1*SQR(J33L);
+        dJ333L*PDstandardNth3beta1 + PDstandardNth11beta1*pow(J13L,2) + 
+        PDstandardNth22beta1*pow(J23L,2) + PDstandardNth33beta1*pow(J33L,2);
       
       JacPDstandardNth33beta2 = 2*J13L*J23L*PDstandardNth12beta2 + 
         2*J13L*J33L*PDstandardNth13beta2 + dJ133L*PDstandardNth1beta2 + 
         2*J23L*J33L*PDstandardNth23beta2 + dJ233L*PDstandardNth2beta2 + 
-        dJ333L*PDstandardNth3beta2 + PDstandardNth11beta2*SQR(J13L) + 
-        PDstandardNth22beta2*SQR(J23L) + PDstandardNth33beta2*SQR(J33L);
+        dJ333L*PDstandardNth3beta2 + PDstandardNth11beta2*pow(J13L,2) + 
+        PDstandardNth22beta2*pow(J23L,2) + PDstandardNth33beta2*pow(J33L,2);
       
       JacPDstandardNth33beta3 = 2*J13L*J23L*PDstandardNth12beta3 + 
         2*J13L*J33L*PDstandardNth13beta3 + dJ133L*PDstandardNth1beta3 + 
         2*J23L*J33L*PDstandardNth23beta3 + dJ233L*PDstandardNth2beta3 + 
-        dJ333L*PDstandardNth3beta3 + PDstandardNth11beta3*SQR(J13L) + 
-        PDstandardNth22beta3*SQR(J23L) + PDstandardNth33beta3*SQR(J33L);
+        dJ333L*PDstandardNth3beta3 + PDstandardNth11beta3*pow(J13L,2) + 
+        PDstandardNth22beta3*pow(J23L,2) + PDstandardNth33beta3*pow(J33L,2);
       
       JacPDstandardNth12alpha = J11L*J12L*PDstandardNth11alpha + 
         J12L*J21L*PDstandardNth12alpha + J11L*J22L*PDstandardNth12alpha + 
@@ -1117,23 +1110,23 @@ static void ML_BSSN_NoVec_RHS1_Body(const cGH* restrict const cctkGH, const int 
     
     CCTK_REAL detgt CCTK_ATTRIBUTE_UNUSED = 1;
     
-    CCTK_REAL gtu11 CCTK_ATTRIBUTE_UNUSED = INV(detgt)*(gt22L*gt33L - 
-      SQR(gt23L));
+    CCTK_REAL gtu11 CCTK_ATTRIBUTE_UNUSED = (gt22L*gt33L - 
+      pow(gt23L,2))*pow(detgt,-1);
     
     CCTK_REAL gtu12 CCTK_ATTRIBUTE_UNUSED = (gt13L*gt23L - 
-      gt12L*gt33L)*INV(detgt);
+      gt12L*gt33L)*pow(detgt,-1);
     
     CCTK_REAL gtu13 CCTK_ATTRIBUTE_UNUSED = (-(gt13L*gt22L) + 
-      gt12L*gt23L)*INV(detgt);
+      gt12L*gt23L)*pow(detgt,-1);
     
-    CCTK_REAL gtu22 CCTK_ATTRIBUTE_UNUSED = INV(detgt)*(gt11L*gt33L - 
-      SQR(gt13L));
+    CCTK_REAL gtu22 CCTK_ATTRIBUTE_UNUSED = (gt11L*gt33L - 
+      pow(gt13L,2))*pow(detgt,-1);
     
     CCTK_REAL gtu23 CCTK_ATTRIBUTE_UNUSED = (gt12L*gt13L - 
-      gt11L*gt23L)*INV(detgt);
+      gt11L*gt23L)*pow(detgt,-1);
     
-    CCTK_REAL gtu33 CCTK_ATTRIBUTE_UNUSED = INV(detgt)*(gt11L*gt22L - 
-      SQR(gt12L));
+    CCTK_REAL gtu33 CCTK_ATTRIBUTE_UNUSED = (gt11L*gt22L - 
+      pow(gt12L,2))*pow(detgt,-1);
     
     CCTK_REAL Gtl111 CCTK_ATTRIBUTE_UNUSED = 0.5*JacPDstandardNth1gt11;
     
@@ -1244,12 +1237,12 @@ static void ML_BSSN_NoVec_RHS1_Body(const cGH* restrict const cctkGH, const int 
       2*Gt313*gtu13 + Gt322*gtu22 + 2*Gt323*gtu23 + Gt333*gtu33;
     
     CCTK_REAL e4phi CCTK_ATTRIBUTE_UNUSED = IfThen(conformalMethod == 
-      1,INV(SQR(phiL)),exp(4*phiL));
+      1,pow(phiL,-2),exp(4*phiL));
     
-    CCTK_REAL em4phi CCTK_ATTRIBUTE_UNUSED = INV(e4phi);
+    CCTK_REAL em4phi CCTK_ATTRIBUTE_UNUSED = pow(e4phi,-1);
     
     CCTK_REAL fac1 CCTK_ATTRIBUTE_UNUSED = IfThen(conformalMethod == 
-      1,-0.5*INV(phiL),1);
+      1,-0.5*pow(phiL,-1),1);
     
     CCTK_REAL cdphi1 CCTK_ATTRIBUTE_UNUSED = fac1*JacPDstandardNth1phi;
     
@@ -1305,16 +1298,16 @@ static void ML_BSSN_NoVec_RHS1_Body(const cGH* restrict const cctkGH, const int 
     CCTK_REAL rho CCTK_ATTRIBUTE_UNUSED = (eTttL - 2*(beta1L*eTtxL + 
       beta2L*eTtyL + beta3L*eTtzL) + beta1L*(beta1L*eTxxL + beta2L*eTxyL + 
       beta3L*eTxzL) + beta2L*(beta1L*eTxyL + beta2L*eTyyL + beta3L*eTyzL) + 
-      beta3L*(beta1L*eTxzL + beta2L*eTyzL + beta3L*eTzzL))*INV(SQR(alphaL));
+      beta3L*(beta1L*eTxzL + beta2L*eTyzL + beta3L*eTzzL))*pow(alphaL,-2);
     
     CCTK_REAL S1 CCTK_ATTRIBUTE_UNUSED = -((eTtxL - beta1L*eTxxL - 
-      beta2L*eTxyL - beta3L*eTxzL)*INV(alphaL));
+      beta2L*eTxyL - beta3L*eTxzL)*pow(alphaL,-1));
     
     CCTK_REAL S2 CCTK_ATTRIBUTE_UNUSED = -((eTtyL - beta1L*eTxyL - 
-      beta2L*eTyyL - beta3L*eTyzL)*INV(alphaL));
+      beta2L*eTyyL - beta3L*eTyzL)*pow(alphaL,-1));
     
     CCTK_REAL S3 CCTK_ATTRIBUTE_UNUSED = -((eTtzL - beta1L*eTxzL - 
-      beta2L*eTyzL - beta3L*eTzzL)*INV(alphaL));
+      beta2L*eTyzL - beta3L*eTzzL)*pow(alphaL,-1));
     
     CCTK_REAL trS CCTK_ATTRIBUTE_UNUSED = em4phi*(eTxxL*gtu11 + 
       2*eTxyL*gtu12 + 2*eTxzL*gtu13 + eTyyL*gtu22 + 2*eTyzL*gtu23 + 
@@ -1449,8 +1442,8 @@ static void ML_BSSN_NoVec_RHS1_Body(const cGH* restrict const cctkGH, const int 
       gtu33*(JacPDstandardNth33alpha + 2*cdphi3*JacPDstandardNth3alpha) - 
       JacPDstandardNth1alpha*Xtn1 - JacPDstandardNth2alpha*Xtn2 - 
       JacPDstandardNth3alpha*Xtn3) + alphaL*(2*Atm12*Atm21 + 2*Atm13*Atm31 + 
-      2*Atm23*Atm32 + 0.333333333333333333333333333333*SQR(trKL) + SQR(Atm11) 
-      + SQR(Atm22) + SQR(Atm33));
+      2*Atm23*Atm32 + 0.333333333333333333333333333333*pow(trKL,2) + 
+      pow(Atm11,2) + pow(Atm22,2) + pow(Atm33,2));
     
     CCTK_REAL trKrhsL CCTK_ATTRIBUTE_UNUSED = dottrK;
     
@@ -1462,10 +1455,10 @@ static void ML_BSSN_NoVec_RHS1_Body(const cGH* restrict const cctkGH, const int 
       dottrK)*LapseACoeff;
     
     CCTK_REAL eta CCTK_ATTRIBUTE_UNUSED = 
-      SpatialBetaDriverRadius*INV(fmax(rL,SpatialBetaDriverRadius));
+      SpatialBetaDriverRadius*pow(fmax(rL,SpatialBetaDriverRadius),-1);
     
     CCTK_REAL theta CCTK_ATTRIBUTE_UNUSED = fmin(1,exp(1 - 
-      rL*INV(SpatialShiftGammaCoeffRadius)));
+      rL*pow(SpatialShiftGammaCoeffRadius,-1)));
     
     CCTK_REAL Ddetgt1 CCTK_ATTRIBUTE_UNUSED = gtu11*JacPDstandardNth1gt11 
       + 2*gtu12*JacPDstandardNth1gt12 + 2*gtu13*JacPDstandardNth1gt13 + 
@@ -1495,21 +1488,21 @@ static void ML_BSSN_NoVec_RHS1_Body(const cGH* restrict const cctkGH, const int 
         gtu23*JacPDstandardNth2gt13 + gtu13*JacPDstandardNth3gt11 + 
         gtu23*JacPDstandardNth3gt12 + gtu33*JacPDstandardNth3gt13)) - 
         2*alphaL*JacPDstandardNth1phi*IfThen(conformalMethod == 
-        1,INV(phiL),-2)) + gtu12*(2*JacPDstandardNth2alpha + alphaL*(Ddetgt2 - 
-        2*(gtu11*JacPDstandardNth1gt12 + gtu12*JacPDstandardNth1gt22 + 
+        1,pow(phiL,-1),-2)) + gtu12*(2*JacPDstandardNth2alpha + alphaL*(Ddetgt2 
+        - 2*(gtu11*JacPDstandardNth1gt12 + gtu12*JacPDstandardNth1gt22 + 
         gtu13*JacPDstandardNth1gt23 + gtu12*JacPDstandardNth2gt12 + 
         gtu22*JacPDstandardNth2gt22 + gtu23*JacPDstandardNth2gt23 + 
         gtu13*JacPDstandardNth3gt12 + gtu23*JacPDstandardNth3gt22 + 
         gtu33*JacPDstandardNth3gt23)) - 
         2*alphaL*JacPDstandardNth2phi*IfThen(conformalMethod == 
-        1,INV(phiL),-2)) + gtu13*(2*JacPDstandardNth3alpha + alphaL*(Ddetgt3 - 
-        2*(gtu11*JacPDstandardNth1gt13 + gtu12*JacPDstandardNth1gt23 + 
+        1,pow(phiL,-1),-2)) + gtu13*(2*JacPDstandardNth3alpha + alphaL*(Ddetgt3 
+        - 2*(gtu11*JacPDstandardNth1gt13 + gtu12*JacPDstandardNth1gt23 + 
         gtu13*JacPDstandardNth1gt33 + gtu12*JacPDstandardNth2gt13 + 
         gtu22*JacPDstandardNth2gt23 + gtu23*JacPDstandardNth2gt33 + 
         gtu13*JacPDstandardNth3gt13 + gtu23*JacPDstandardNth3gt23 + 
         gtu33*JacPDstandardNth3gt33)) - 
         2*alphaL*JacPDstandardNth3phi*IfThen(conformalMethod == 
-        1,INV(phiL),-2)));
+        1,pow(phiL,-1),-2)));
       
       beta2rhsL = -0.5*alphaL*em4phi*(gtu12*(2*JacPDstandardNth1alpha + 
         alphaL*(Ddetgt1 - 2*(gtu11*JacPDstandardNth1gt11 + 
@@ -1518,21 +1511,21 @@ static void ML_BSSN_NoVec_RHS1_Body(const cGH* restrict const cctkGH, const int 
         gtu23*JacPDstandardNth2gt13 + gtu13*JacPDstandardNth3gt11 + 
         gtu23*JacPDstandardNth3gt12 + gtu33*JacPDstandardNth3gt13)) - 
         2*alphaL*JacPDstandardNth1phi*IfThen(conformalMethod == 
-        1,INV(phiL),-2)) + gtu22*(2*JacPDstandardNth2alpha + alphaL*(Ddetgt2 - 
-        2*(gtu11*JacPDstandardNth1gt12 + gtu12*JacPDstandardNth1gt22 + 
+        1,pow(phiL,-1),-2)) + gtu22*(2*JacPDstandardNth2alpha + alphaL*(Ddetgt2 
+        - 2*(gtu11*JacPDstandardNth1gt12 + gtu12*JacPDstandardNth1gt22 + 
         gtu13*JacPDstandardNth1gt23 + gtu12*JacPDstandardNth2gt12 + 
         gtu22*JacPDstandardNth2gt22 + gtu23*JacPDstandardNth2gt23 + 
         gtu13*JacPDstandardNth3gt12 + gtu23*JacPDstandardNth3gt22 + 
         gtu33*JacPDstandardNth3gt23)) - 
         2*alphaL*JacPDstandardNth2phi*IfThen(conformalMethod == 
-        1,INV(phiL),-2)) + gtu23*(2*JacPDstandardNth3alpha + alphaL*(Ddetgt3 - 
-        2*(gtu11*JacPDstandardNth1gt13 + gtu12*JacPDstandardNth1gt23 + 
+        1,pow(phiL,-1),-2)) + gtu23*(2*JacPDstandardNth3alpha + alphaL*(Ddetgt3 
+        - 2*(gtu11*JacPDstandardNth1gt13 + gtu12*JacPDstandardNth1gt23 + 
         gtu13*JacPDstandardNth1gt33 + gtu12*JacPDstandardNth2gt13 + 
         gtu22*JacPDstandardNth2gt23 + gtu23*JacPDstandardNth2gt33 + 
         gtu13*JacPDstandardNth3gt13 + gtu23*JacPDstandardNth3gt23 + 
         gtu33*JacPDstandardNth3gt33)) - 
         2*alphaL*JacPDstandardNth3phi*IfThen(conformalMethod == 
-        1,INV(phiL),-2)));
+        1,pow(phiL,-1),-2)));
       
       beta3rhsL = -0.5*alphaL*em4phi*(gtu13*(2*JacPDstandardNth1alpha + 
         alphaL*(Ddetgt1 - 2*(gtu11*JacPDstandardNth1gt11 + 
@@ -1541,21 +1534,21 @@ static void ML_BSSN_NoVec_RHS1_Body(const cGH* restrict const cctkGH, const int 
         gtu23*JacPDstandardNth2gt13 + gtu13*JacPDstandardNth3gt11 + 
         gtu23*JacPDstandardNth3gt12 + gtu33*JacPDstandardNth3gt13)) - 
         2*alphaL*JacPDstandardNth1phi*IfThen(conformalMethod == 
-        1,INV(phiL),-2)) + gtu23*(2*JacPDstandardNth2alpha + alphaL*(Ddetgt2 - 
-        2*(gtu11*JacPDstandardNth1gt12 + gtu12*JacPDstandardNth1gt22 + 
+        1,pow(phiL,-1),-2)) + gtu23*(2*JacPDstandardNth2alpha + alphaL*(Ddetgt2 
+        - 2*(gtu11*JacPDstandardNth1gt12 + gtu12*JacPDstandardNth1gt22 + 
         gtu13*JacPDstandardNth1gt23 + gtu12*JacPDstandardNth2gt12 + 
         gtu22*JacPDstandardNth2gt22 + gtu23*JacPDstandardNth2gt23 + 
         gtu13*JacPDstandardNth3gt12 + gtu23*JacPDstandardNth3gt22 + 
         gtu33*JacPDstandardNth3gt23)) - 
         2*alphaL*JacPDstandardNth2phi*IfThen(conformalMethod == 
-        1,INV(phiL),-2)) + gtu33*(2*JacPDstandardNth3alpha + alphaL*(Ddetgt3 - 
-        2*(gtu11*JacPDstandardNth1gt13 + gtu12*JacPDstandardNth1gt23 + 
+        1,pow(phiL,-1),-2)) + gtu33*(2*JacPDstandardNth3alpha + alphaL*(Ddetgt3 
+        - 2*(gtu11*JacPDstandardNth1gt13 + gtu12*JacPDstandardNth1gt23 + 
         gtu13*JacPDstandardNth1gt33 + gtu12*JacPDstandardNth2gt13 + 
         gtu22*JacPDstandardNth2gt23 + gtu23*JacPDstandardNth2gt33 + 
         gtu13*JacPDstandardNth3gt13 + gtu23*JacPDstandardNth3gt23 + 
         gtu33*JacPDstandardNth3gt33)) - 
         2*alphaL*JacPDstandardNth3phi*IfThen(conformalMethod == 
-        1,INV(phiL),-2)));
+        1,pow(phiL,-1),-2)));
     }
     else
     {

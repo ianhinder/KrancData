@@ -15,13 +15,6 @@
 #include "Differencing.h"
 #include "loopcontrol.h"
 
-/* Define macros used in calculations */
-#define INITVALUE (42)
-#define INV(x) ((CCTK_REAL)1.0 / (x))
-#define SQR(x) ((x) * (x))
-#define CUB(x) ((x) * SQR(x))
-#define QAD(x) (SQR(SQR(x)))
-
 namespace ConservationCalculation {
 
 
@@ -57,9 +50,9 @@ static void eulerauto_cons_calc_primitives_Body(const cGH* restrict const cctkGH
     ToReal(CCTK_DELTA_SPACE(1));
   const CCTK_REAL dz CCTK_ATTRIBUTE_UNUSED = 
     ToReal(CCTK_DELTA_SPACE(2));
-  const CCTK_REAL dxi CCTK_ATTRIBUTE_UNUSED = INV(dx);
-  const CCTK_REAL dyi CCTK_ATTRIBUTE_UNUSED = INV(dy);
-  const CCTK_REAL dzi CCTK_ATTRIBUTE_UNUSED = INV(dz);
+  const CCTK_REAL dxi CCTK_ATTRIBUTE_UNUSED = pow(dx,-1);
+  const CCTK_REAL dyi CCTK_ATTRIBUTE_UNUSED = pow(dy,-1);
+  const CCTK_REAL dzi CCTK_ATTRIBUTE_UNUSED = pow(dz,-1);
   const CCTK_REAL khalf CCTK_ATTRIBUTE_UNUSED = 0.5;
   const CCTK_REAL kthird CCTK_ATTRIBUTE_UNUSED = 
     0.333333333333333333333333333333;
@@ -72,9 +65,9 @@ static void eulerauto_cons_calc_primitives_Body(const cGH* restrict const cctkGH
   const CCTK_REAL hdzi CCTK_ATTRIBUTE_UNUSED = 0.5*dzi;
   /* Initialize predefined quantities */
   const CCTK_REAL p1o1 CCTK_ATTRIBUTE_UNUSED = 1;
-  const CCTK_REAL p1odx CCTK_ATTRIBUTE_UNUSED = INV(dx);
-  const CCTK_REAL p1ody CCTK_ATTRIBUTE_UNUSED = INV(dy);
-  const CCTK_REAL p1odz CCTK_ATTRIBUTE_UNUSED = INV(dz);
+  const CCTK_REAL p1odx CCTK_ATTRIBUTE_UNUSED = pow(dx,-1);
+  const CCTK_REAL p1ody CCTK_ATTRIBUTE_UNUSED = pow(dy,-1);
+  const CCTK_REAL p1odz CCTK_ATTRIBUTE_UNUSED = pow(dz,-1);
   /* Assign local copies of arrays functions */
   
   
@@ -106,14 +99,14 @@ static void eulerauto_cons_calc_primitives_Body(const cGH* restrict const cctkGH
     /* Calculate temporaries and grid functions */
     CCTK_REAL rhoL CCTK_ATTRIBUTE_UNUSED = DenL;
     
-    CCTK_REAL v1L CCTK_ATTRIBUTE_UNUSED = S1L*INV(DenL);
+    CCTK_REAL v1L CCTK_ATTRIBUTE_UNUSED = S1L*pow(DenL,-1);
     
-    CCTK_REAL v2L CCTK_ATTRIBUTE_UNUSED = S2L*INV(DenL);
+    CCTK_REAL v2L CCTK_ATTRIBUTE_UNUSED = S2L*pow(DenL,-1);
     
-    CCTK_REAL v3L CCTK_ATTRIBUTE_UNUSED = S3L*INV(DenL);
+    CCTK_REAL v3L CCTK_ATTRIBUTE_UNUSED = S3L*pow(DenL,-1);
     
     CCTK_REAL pL CCTK_ATTRIBUTE_UNUSED = (-1 + gamma)*(EnL - 
-      0.5*INV(DenL)*(SQR(S1L) + SQR(S2L) + SQR(S3L)));
+      0.5*pow(DenL,-1)*(pow(S1L,2) + pow(S2L,2) + pow(S3L,2)));
     /* Copy local copies back to grid functions */
     p[index] = pL;
     rho[index] = rhoL;

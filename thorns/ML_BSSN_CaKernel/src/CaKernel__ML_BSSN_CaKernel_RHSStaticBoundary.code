@@ -7,12 +7,6 @@ using namespace CCTK_THORN;
 #undef KRANC_GFOFFSET3D
 #define KRANC_GFOFFSET3D(u,i,j,k) I3D(u,i,j,k)
 
-/* Define macros used in calculations */
-#define INITVALUE (42)
-#define INV(x) ((CCTK_REAL)1.0 / (x))
-#define SQR(x) ((x) * (x))
-#define CUB(x) ((x) * SQR(x))
-#define QAD(x) (SQR(SQR(x)))
 
 CAKERNEL_ML_BSSN_CaKernel_RHSStaticBoundary_Begin
   /* Include user-supplied include files */
