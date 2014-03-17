@@ -19,14 +19,6 @@
 
 /* Define macros used in calculations */
 #define INITVALUE (42)
-#define ScalarINV(x) ((CCTK_REAL)1.0 / (x))
-#define ScalarSQR(x) ((x) * (x))
-#define ScalarCUB(x) ((x) * ScalarSQR(x))
-#define ScalarQAD(x) (ScalarSQR(ScalarSQR(x)))
-#define INV(x) (kdiv(ToReal(1.0),x))
-#define SQR(x) (kmul(x,x))
-#define CUB(x) (kmul(x,SQR(x)))
-#define QAD(x) (SQR(SQR(x)))
 
 namespace ML_BSSN_OpenCL {
 
@@ -74,8 +66,10 @@ static void ML_BSSN_OpenCL_RHS1_Body(const cGH* restrict const cctkGH, const int
   "/* Include user-supplied include files */\n"
   "/* Initialise finite differencing variables */\n"
   "const ptrdiff_t di CCTK_ATTRIBUTE_UNUSED = 1;\n"
-  "const ptrdiff_t dj CCTK_ATTRIBUTE_UNUSED = CCTK_GFINDEX3D(cctkGH,0,1,0) - CCTK_GFINDEX3D(cctkGH,0,0,0);\n"
-  "const ptrdiff_t dk CCTK_ATTRIBUTE_UNUSED = CCTK_GFINDEX3D(cctkGH,0,0,1) - CCTK_GFINDEX3D(cctkGH,0,0,0);\n"
+  "const ptrdiff_t dj CCTK_ATTRIBUTE_UNUSED = \n"
+  "  CCTK_GFINDEX3D(cctkGH,0,1,0) - CCTK_GFINDEX3D(cctkGH,0,0,0);\n"
+  "const ptrdiff_t dk CCTK_ATTRIBUTE_UNUSED = \n"
+  "  CCTK_GFINDEX3D(cctkGH,0,0,1) - CCTK_GFINDEX3D(cctkGH,0,0,0);\n"
   "const ptrdiff_t cdi CCTK_ATTRIBUTE_UNUSED = sizeof(CCTK_REAL) * di;\n"
   "const ptrdiff_t cdj CCTK_ATTRIBUTE_UNUSED = sizeof(CCTK_REAL) * dj;\n"
   "const ptrdiff_t cdk CCTK_ATTRIBUTE_UNUSED = sizeof(CCTK_REAL) * dk;\n"
@@ -83,16 +77,23 @@ static void ML_BSSN_OpenCL_RHS1_Body(const cGH* restrict const cctkGH, const int
   "const ptrdiff_t cctkLbnd2 CCTK_ATTRIBUTE_UNUSED = cctk_lbnd[1];\n"
   "const ptrdiff_t cctkLbnd3 CCTK_ATTRIBUTE_UNUSED = cctk_lbnd[2];\n"
   "const CCTK_REAL_VEC t CCTK_ATTRIBUTE_UNUSED = ToReal(cctk_time);\n"
-  "const CCTK_REAL_VEC cctkOriginSpace1 CCTK_ATTRIBUTE_UNUSED = ToReal(CCTK_ORIGIN_SPACE(0));\n"
-  "const CCTK_REAL_VEC cctkOriginSpace2 CCTK_ATTRIBUTE_UNUSED = ToReal(CCTK_ORIGIN_SPACE(1));\n"
-  "const CCTK_REAL_VEC cctkOriginSpace3 CCTK_ATTRIBUTE_UNUSED = ToReal(CCTK_ORIGIN_SPACE(2));\n"
-  "const CCTK_REAL_VEC dt CCTK_ATTRIBUTE_UNUSED = ToReal(CCTK_DELTA_TIME);\n"
-  "const CCTK_REAL_VEC dx CCTK_ATTRIBUTE_UNUSED = ToReal(CCTK_DELTA_SPACE(0));\n"
-  "const CCTK_REAL_VEC dy CCTK_ATTRIBUTE_UNUSED = ToReal(CCTK_DELTA_SPACE(1));\n"
-  "const CCTK_REAL_VEC dz CCTK_ATTRIBUTE_UNUSED = ToReal(CCTK_DELTA_SPACE(2));\n"
-  "const CCTK_REAL_VEC dxi CCTK_ATTRIBUTE_UNUSED = INV(dx);\n"
-  "const CCTK_REAL_VEC dyi CCTK_ATTRIBUTE_UNUSED = INV(dy);\n"
-  "const CCTK_REAL_VEC dzi CCTK_ATTRIBUTE_UNUSED = INV(dz);\n"
+  "const CCTK_REAL_VEC cctkOriginSpace1 CCTK_ATTRIBUTE_UNUSED = \n"
+  "  ToReal(CCTK_ORIGIN_SPACE(0));\n"
+  "const CCTK_REAL_VEC cctkOriginSpace2 CCTK_ATTRIBUTE_UNUSED = \n"
+  "  ToReal(CCTK_ORIGIN_SPACE(1));\n"
+  "const CCTK_REAL_VEC cctkOriginSpace3 CCTK_ATTRIBUTE_UNUSED = \n"
+  "  ToReal(CCTK_ORIGIN_SPACE(2));\n"
+  "const CCTK_REAL_VEC dt CCTK_ATTRIBUTE_UNUSED = \n"
+  "  ToReal(CCTK_DELTA_TIME);\n"
+  "const CCTK_REAL_VEC dx CCTK_ATTRIBUTE_UNUSED = \n"
+  "  ToReal(CCTK_DELTA_SPACE(0));\n"
+  "const CCTK_REAL_VEC dy CCTK_ATTRIBUTE_UNUSED = \n"
+  "  ToReal(CCTK_DELTA_SPACE(1));\n"
+  "const CCTK_REAL_VEC dz CCTK_ATTRIBUTE_UNUSED = \n"
+  "  ToReal(CCTK_DELTA_SPACE(2));\n"
+  "const CCTK_REAL_VEC dxi CCTK_ATTRIBUTE_UNUSED = kdiv(ToReal(1),dx);\n"
+  "const CCTK_REAL_VEC dyi CCTK_ATTRIBUTE_UNUSED = kdiv(ToReal(1),dy);\n"
+  "const CCTK_REAL_VEC dzi CCTK_ATTRIBUTE_UNUSED = kdiv(ToReal(1),dz);\n"
   "const CCTK_REAL_VEC khalf CCTK_ATTRIBUTE_UNUSED = ToReal(0.5);\n"
   "const CCTK_REAL_VEC kthird CCTK_ATTRIBUTE_UNUSED = \n"
   "  ToReal(0.333333333333333333333333333333);\n"
