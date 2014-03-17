@@ -109,9 +109,8 @@ static void eulerauto_cons_calc_intercell_conserved_3_Body(const cGH* restrict c
     
     CCTK_REAL S3LeftL CCTK_ATTRIBUTE_UNUSED = rhoLeftL*v3LeftL;
     
-    CCTK_REAL EnLeftL CCTK_ATTRIBUTE_UNUSED = pLeftL*INV(-1 + 
-      ToReal(gamma)) + 0.5*rhoLeftL*(SQR(v1LeftL) + SQR(v2LeftL) + 
-      SQR(v3LeftL));
+    CCTK_REAL EnLeftL CCTK_ATTRIBUTE_UNUSED = pLeftL*INV(-1 + gamma) + 
+      0.5*rhoLeftL*(SQR(v1LeftL) + SQR(v2LeftL) + SQR(v3LeftL));
     
     CCTK_REAL DenRightL CCTK_ATTRIBUTE_UNUSED = rhoRightL;
     
@@ -121,9 +120,8 @@ static void eulerauto_cons_calc_intercell_conserved_3_Body(const cGH* restrict c
     
     CCTK_REAL S3RightL CCTK_ATTRIBUTE_UNUSED = rhoRightL*v3RightL;
     
-    CCTK_REAL EnRightL CCTK_ATTRIBUTE_UNUSED = pRightL*INV(-1 + 
-      ToReal(gamma)) + 0.5*rhoRightL*(SQR(v1RightL) + SQR(v2RightL) + 
-      SQR(v3RightL));
+    CCTK_REAL EnRightL CCTK_ATTRIBUTE_UNUSED = pRightL*INV(-1 + gamma) + 
+      0.5*rhoRightL*(SQR(v1RightL) + SQR(v2RightL) + SQR(v3RightL));
     /* Copy local copies back to grid functions */
     DenLeft[index] = DenLeftL;
     DenRight[index] = DenRightL;

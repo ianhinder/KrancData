@@ -137,71 +137,70 @@ static void ML_BSSN_NoVec_RHS1_Body(const cGH* restrict const cctkGH, const int 
   const CCTK_REAL pm1o4dy CCTK_ATTRIBUTE_UNUSED = -0.25*INV(dy);
   const CCTK_REAL pm1o4dz CCTK_ATTRIBUTE_UNUSED = -0.25*INV(dz);
   /* Jacobian variable pointers */
-  const bool use_jacobian1 = (!CCTK_IsFunctionAliased("MultiPatch_GetMap") || MultiPatch_GetMap(cctkGH) != jacobian_identity_map)
+  const bool usejacobian1 = (!CCTK_IsFunctionAliased("MultiPatch_GetMap") || MultiPatch_GetMap(cctkGH) != jacobian_identity_map)
                         && strlen(jacobian_group) > 0;
-  const bool use_jacobian = assume_use_jacobian>=0 ? assume_use_jacobian : use_jacobian1;
-  const bool usejacobian CCTK_ATTRIBUTE_UNUSED = use_jacobian;
-  if (use_jacobian && (strlen(jacobian_derivative_group) == 0))
+  const bool usejacobian = assume_use_jacobian>=0 ? assume_use_jacobian : usejacobian1;
+  if (usejacobian && (strlen(jacobian_derivative_group) == 0))
   {
     CCTK_WARN(1, "GenericFD::jacobian_group and GenericFD::jacobian_derivative_group must both be set to valid group names");
   }
   
   const CCTK_REAL* restrict jacobian_ptrs[9];
-  if (use_jacobian) GroupDataPointers(cctkGH, jacobian_group,
+  if (usejacobian) GroupDataPointers(cctkGH, jacobian_group,
                                                 9, jacobian_ptrs);
   
-  const CCTK_REAL* restrict const J11 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_ptrs[0] : 0;
-  const CCTK_REAL* restrict const J12 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_ptrs[1] : 0;
-  const CCTK_REAL* restrict const J13 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_ptrs[2] : 0;
-  const CCTK_REAL* restrict const J21 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_ptrs[3] : 0;
-  const CCTK_REAL* restrict const J22 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_ptrs[4] : 0;
-  const CCTK_REAL* restrict const J23 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_ptrs[5] : 0;
-  const CCTK_REAL* restrict const J31 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_ptrs[6] : 0;
-  const CCTK_REAL* restrict const J32 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_ptrs[7] : 0;
-  const CCTK_REAL* restrict const J33 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_ptrs[8] : 0;
+  const CCTK_REAL* restrict const J11 CCTK_ATTRIBUTE_UNUSED = usejacobian ? jacobian_ptrs[0] : 0;
+  const CCTK_REAL* restrict const J12 CCTK_ATTRIBUTE_UNUSED = usejacobian ? jacobian_ptrs[1] : 0;
+  const CCTK_REAL* restrict const J13 CCTK_ATTRIBUTE_UNUSED = usejacobian ? jacobian_ptrs[2] : 0;
+  const CCTK_REAL* restrict const J21 CCTK_ATTRIBUTE_UNUSED = usejacobian ? jacobian_ptrs[3] : 0;
+  const CCTK_REAL* restrict const J22 CCTK_ATTRIBUTE_UNUSED = usejacobian ? jacobian_ptrs[4] : 0;
+  const CCTK_REAL* restrict const J23 CCTK_ATTRIBUTE_UNUSED = usejacobian ? jacobian_ptrs[5] : 0;
+  const CCTK_REAL* restrict const J31 CCTK_ATTRIBUTE_UNUSED = usejacobian ? jacobian_ptrs[6] : 0;
+  const CCTK_REAL* restrict const J32 CCTK_ATTRIBUTE_UNUSED = usejacobian ? jacobian_ptrs[7] : 0;
+  const CCTK_REAL* restrict const J33 CCTK_ATTRIBUTE_UNUSED = usejacobian ? jacobian_ptrs[8] : 0;
   
   const CCTK_REAL* restrict jacobian_determinant_ptrs[1] CCTK_ATTRIBUTE_UNUSED;
-  if (use_jacobian && strlen(jacobian_determinant_group) > 0) GroupDataPointers(cctkGH, jacobian_determinant_group,
+  if (usejacobian && strlen(jacobian_determinant_group) > 0) GroupDataPointers(cctkGH, jacobian_determinant_group,
                                                 1, jacobian_determinant_ptrs);
   
-  const CCTK_REAL* restrict const detJ CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_determinant_ptrs[0] : 0;
+  const CCTK_REAL* restrict const detJ CCTK_ATTRIBUTE_UNUSED = usejacobian ? jacobian_determinant_ptrs[0] : 0;
   
   const CCTK_REAL* restrict jacobian_inverse_ptrs[9] CCTK_ATTRIBUTE_UNUSED;
-  if (use_jacobian && strlen(jacobian_inverse_group) > 0) GroupDataPointers(cctkGH, jacobian_inverse_group,
+  if (usejacobian && strlen(jacobian_inverse_group) > 0) GroupDataPointers(cctkGH, jacobian_inverse_group,
                                                 9, jacobian_inverse_ptrs);
   
-  const CCTK_REAL* restrict const iJ11 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_inverse_ptrs[0] : 0;
-  const CCTK_REAL* restrict const iJ12 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_inverse_ptrs[1] : 0;
-  const CCTK_REAL* restrict const iJ13 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_inverse_ptrs[2] : 0;
-  const CCTK_REAL* restrict const iJ21 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_inverse_ptrs[3] : 0;
-  const CCTK_REAL* restrict const iJ22 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_inverse_ptrs[4] : 0;
-  const CCTK_REAL* restrict const iJ23 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_inverse_ptrs[5] : 0;
-  const CCTK_REAL* restrict const iJ31 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_inverse_ptrs[6] : 0;
-  const CCTK_REAL* restrict const iJ32 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_inverse_ptrs[7] : 0;
-  const CCTK_REAL* restrict const iJ33 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_inverse_ptrs[8] : 0;
+  const CCTK_REAL* restrict const iJ11 CCTK_ATTRIBUTE_UNUSED = usejacobian ? jacobian_inverse_ptrs[0] : 0;
+  const CCTK_REAL* restrict const iJ12 CCTK_ATTRIBUTE_UNUSED = usejacobian ? jacobian_inverse_ptrs[1] : 0;
+  const CCTK_REAL* restrict const iJ13 CCTK_ATTRIBUTE_UNUSED = usejacobian ? jacobian_inverse_ptrs[2] : 0;
+  const CCTK_REAL* restrict const iJ21 CCTK_ATTRIBUTE_UNUSED = usejacobian ? jacobian_inverse_ptrs[3] : 0;
+  const CCTK_REAL* restrict const iJ22 CCTK_ATTRIBUTE_UNUSED = usejacobian ? jacobian_inverse_ptrs[4] : 0;
+  const CCTK_REAL* restrict const iJ23 CCTK_ATTRIBUTE_UNUSED = usejacobian ? jacobian_inverse_ptrs[5] : 0;
+  const CCTK_REAL* restrict const iJ31 CCTK_ATTRIBUTE_UNUSED = usejacobian ? jacobian_inverse_ptrs[6] : 0;
+  const CCTK_REAL* restrict const iJ32 CCTK_ATTRIBUTE_UNUSED = usejacobian ? jacobian_inverse_ptrs[7] : 0;
+  const CCTK_REAL* restrict const iJ33 CCTK_ATTRIBUTE_UNUSED = usejacobian ? jacobian_inverse_ptrs[8] : 0;
   
   const CCTK_REAL* restrict jacobian_derivative_ptrs[18] CCTK_ATTRIBUTE_UNUSED;
-  if (use_jacobian) GroupDataPointers(cctkGH, jacobian_derivative_group,
+  if (usejacobian) GroupDataPointers(cctkGH, jacobian_derivative_group,
                                       18, jacobian_derivative_ptrs);
   
-  const CCTK_REAL* restrict const dJ111 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_derivative_ptrs[0] : 0;
-  const CCTK_REAL* restrict const dJ112 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_derivative_ptrs[1] : 0;
-  const CCTK_REAL* restrict const dJ113 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_derivative_ptrs[2] : 0;
-  const CCTK_REAL* restrict const dJ122 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_derivative_ptrs[3] : 0;
-  const CCTK_REAL* restrict const dJ123 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_derivative_ptrs[4] : 0;
-  const CCTK_REAL* restrict const dJ133 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_derivative_ptrs[5] : 0;
-  const CCTK_REAL* restrict const dJ211 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_derivative_ptrs[6] : 0;
-  const CCTK_REAL* restrict const dJ212 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_derivative_ptrs[7] : 0;
-  const CCTK_REAL* restrict const dJ213 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_derivative_ptrs[8] : 0;
-  const CCTK_REAL* restrict const dJ222 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_derivative_ptrs[9] : 0;
-  const CCTK_REAL* restrict const dJ223 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_derivative_ptrs[10] : 0;
-  const CCTK_REAL* restrict const dJ233 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_derivative_ptrs[11] : 0;
-  const CCTK_REAL* restrict const dJ311 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_derivative_ptrs[12] : 0;
-  const CCTK_REAL* restrict const dJ312 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_derivative_ptrs[13] : 0;
-  const CCTK_REAL* restrict const dJ313 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_derivative_ptrs[14] : 0;
-  const CCTK_REAL* restrict const dJ322 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_derivative_ptrs[15] : 0;
-  const CCTK_REAL* restrict const dJ323 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_derivative_ptrs[16] : 0;
-  const CCTK_REAL* restrict const dJ333 CCTK_ATTRIBUTE_UNUSED = use_jacobian ? jacobian_derivative_ptrs[17] : 0;
+  const CCTK_REAL* restrict const dJ111 CCTK_ATTRIBUTE_UNUSED = usejacobian ? jacobian_derivative_ptrs[0] : 0;
+  const CCTK_REAL* restrict const dJ112 CCTK_ATTRIBUTE_UNUSED = usejacobian ? jacobian_derivative_ptrs[1] : 0;
+  const CCTK_REAL* restrict const dJ113 CCTK_ATTRIBUTE_UNUSED = usejacobian ? jacobian_derivative_ptrs[2] : 0;
+  const CCTK_REAL* restrict const dJ122 CCTK_ATTRIBUTE_UNUSED = usejacobian ? jacobian_derivative_ptrs[3] : 0;
+  const CCTK_REAL* restrict const dJ123 CCTK_ATTRIBUTE_UNUSED = usejacobian ? jacobian_derivative_ptrs[4] : 0;
+  const CCTK_REAL* restrict const dJ133 CCTK_ATTRIBUTE_UNUSED = usejacobian ? jacobian_derivative_ptrs[5] : 0;
+  const CCTK_REAL* restrict const dJ211 CCTK_ATTRIBUTE_UNUSED = usejacobian ? jacobian_derivative_ptrs[6] : 0;
+  const CCTK_REAL* restrict const dJ212 CCTK_ATTRIBUTE_UNUSED = usejacobian ? jacobian_derivative_ptrs[7] : 0;
+  const CCTK_REAL* restrict const dJ213 CCTK_ATTRIBUTE_UNUSED = usejacobian ? jacobian_derivative_ptrs[8] : 0;
+  const CCTK_REAL* restrict const dJ222 CCTK_ATTRIBUTE_UNUSED = usejacobian ? jacobian_derivative_ptrs[9] : 0;
+  const CCTK_REAL* restrict const dJ223 CCTK_ATTRIBUTE_UNUSED = usejacobian ? jacobian_derivative_ptrs[10] : 0;
+  const CCTK_REAL* restrict const dJ233 CCTK_ATTRIBUTE_UNUSED = usejacobian ? jacobian_derivative_ptrs[11] : 0;
+  const CCTK_REAL* restrict const dJ311 CCTK_ATTRIBUTE_UNUSED = usejacobian ? jacobian_derivative_ptrs[12] : 0;
+  const CCTK_REAL* restrict const dJ312 CCTK_ATTRIBUTE_UNUSED = usejacobian ? jacobian_derivative_ptrs[13] : 0;
+  const CCTK_REAL* restrict const dJ313 CCTK_ATTRIBUTE_UNUSED = usejacobian ? jacobian_derivative_ptrs[14] : 0;
+  const CCTK_REAL* restrict const dJ322 CCTK_ATTRIBUTE_UNUSED = usejacobian ? jacobian_derivative_ptrs[15] : 0;
+  const CCTK_REAL* restrict const dJ323 CCTK_ATTRIBUTE_UNUSED = usejacobian ? jacobian_derivative_ptrs[16] : 0;
+  const CCTK_REAL* restrict const dJ333 CCTK_ATTRIBUTE_UNUSED = usejacobian ? jacobian_derivative_ptrs[17] : 0;
   /* Assign local copies of arrays functions */
   
   
@@ -280,7 +279,7 @@ static void ML_BSSN_NoVec_RHS1_Body(const cGH* restrict const cctkGH, const int 
     
     CCTK_REAL dJ111L, dJ112L, dJ113L, dJ122L, dJ123L, dJ133L, dJ211L, dJ212L, dJ213L, dJ222L, dJ223L, dJ233L, dJ311L, dJ312L, dJ313L, dJ322L, dJ323L, dJ333L, J11L, J12L, J13L, J21L, J22L, J23L, J31L, J32L, J33L CCTK_ATTRIBUTE_UNUSED ;
     
-    if (use_jacobian)
+    if (usejacobian)
     {
       dJ111L = dJ111[index];
       dJ112L = dJ112[index];
@@ -587,7 +586,7 @@ static void ML_BSSN_NoVec_RHS1_Body(const cGH* restrict const cctkGH, const int 
     CCTK_REAL JacPDstandardNth3phi CCTK_ATTRIBUTE_UNUSED;
     CCTK_REAL JacPDstandardNth3trK CCTK_ATTRIBUTE_UNUSED;
     
-    if (use_jacobian)
+    if (usejacobian)
     {
       JacPDstandardNth1alpha = J11L*PDstandardNth1alpha + 
         J21L*PDstandardNth2alpha + J31L*PDstandardNth3alpha;
@@ -1447,19 +1446,18 @@ static void ML_BSSN_NoVec_RHS1_Body(const cGH* restrict const cctkGH, const int 
     
     CCTK_REAL trKrhsL CCTK_ATTRIBUTE_UNUSED = dottrK;
     
-    CCTK_REAL alpharhsL CCTK_ATTRIBUTE_UNUSED = 
-      -(pow(alphaL,ToReal(harmonicN))*ToReal(harmonicF)*((trKL + (-1 + 
-      alphaL)*ToReal(AlphaDriver))*(1 - ToReal(LapseACoeff)) + 
-      AL*ToReal(LapseACoeff)));
+    CCTK_REAL alpharhsL CCTK_ATTRIBUTE_UNUSED = -(harmonicF*((trKL + (-1 + 
+      alphaL)*AlphaDriver)*(1 - LapseACoeff) + 
+      AL*LapseACoeff)*pow(alphaL,harmonicN));
     
-    CCTK_REAL ArhsL CCTK_ATTRIBUTE_UNUSED = (dottrK - 
-      AL*ToReal(AlphaDriver))*ToReal(LapseACoeff);
+    CCTK_REAL ArhsL CCTK_ATTRIBUTE_UNUSED = (-(AL*AlphaDriver) + 
+      dottrK)*LapseACoeff;
     
     CCTK_REAL eta CCTK_ATTRIBUTE_UNUSED = 
-      INV(fmax(rL,ToReal(SpatialBetaDriverRadius)))*ToReal(SpatialBetaDriverRadius);
+      SpatialBetaDriverRadius*INV(fmax(rL,SpatialBetaDriverRadius));
     
     CCTK_REAL theta CCTK_ATTRIBUTE_UNUSED = fmin(1,exp(1 - 
-      rL*INV(ToReal(SpatialShiftGammaCoeffRadius))));
+      rL*INV(SpatialShiftGammaCoeffRadius)));
     
     CCTK_REAL Ddetgt1 CCTK_ATTRIBUTE_UNUSED = gtu11*JacPDstandardNth1gt11 
       + 2*gtu12*JacPDstandardNth1gt12 + 2*gtu13*JacPDstandardNth1gt13 + 
@@ -1488,21 +1486,21 @@ static void ML_BSSN_NoVec_RHS1_Body(const cGH* restrict const cctkGH, const int 
         gtu12*JacPDstandardNth2gt11 + gtu22*JacPDstandardNth2gt12 + 
         gtu23*JacPDstandardNth2gt13 + gtu13*JacPDstandardNth3gt11 + 
         gtu23*JacPDstandardNth3gt12 + gtu33*JacPDstandardNth3gt13)) - 
-        2*alphaL*JacPDstandardNth1phi*IfThen(ToReal(conformalMethod) == 
+        2*alphaL*JacPDstandardNth1phi*IfThen(conformalMethod == 
         1,INV(phiL),-2)) + gtu12*(2*JacPDstandardNth2alpha + alphaL*(Ddetgt2 - 
         2*(gtu11*JacPDstandardNth1gt12 + gtu12*JacPDstandardNth1gt22 + 
         gtu13*JacPDstandardNth1gt23 + gtu12*JacPDstandardNth2gt12 + 
         gtu22*JacPDstandardNth2gt22 + gtu23*JacPDstandardNth2gt23 + 
         gtu13*JacPDstandardNth3gt12 + gtu23*JacPDstandardNth3gt22 + 
         gtu33*JacPDstandardNth3gt23)) - 
-        2*alphaL*JacPDstandardNth2phi*IfThen(ToReal(conformalMethod) == 
+        2*alphaL*JacPDstandardNth2phi*IfThen(conformalMethod == 
         1,INV(phiL),-2)) + gtu13*(2*JacPDstandardNth3alpha + alphaL*(Ddetgt3 - 
         2*(gtu11*JacPDstandardNth1gt13 + gtu12*JacPDstandardNth1gt23 + 
         gtu13*JacPDstandardNth1gt33 + gtu12*JacPDstandardNth2gt13 + 
         gtu22*JacPDstandardNth2gt23 + gtu23*JacPDstandardNth2gt33 + 
         gtu13*JacPDstandardNth3gt13 + gtu23*JacPDstandardNth3gt23 + 
         gtu33*JacPDstandardNth3gt33)) - 
-        2*alphaL*JacPDstandardNth3phi*IfThen(ToReal(conformalMethod) == 
+        2*alphaL*JacPDstandardNth3phi*IfThen(conformalMethod == 
         1,INV(phiL),-2)));
       
       beta2rhsL = -0.5*alphaL*em4phi*(gtu12*(2*JacPDstandardNth1alpha + 
@@ -1511,21 +1509,21 @@ static void ML_BSSN_NoVec_RHS1_Body(const cGH* restrict const cctkGH, const int 
         gtu12*JacPDstandardNth2gt11 + gtu22*JacPDstandardNth2gt12 + 
         gtu23*JacPDstandardNth2gt13 + gtu13*JacPDstandardNth3gt11 + 
         gtu23*JacPDstandardNth3gt12 + gtu33*JacPDstandardNth3gt13)) - 
-        2*alphaL*JacPDstandardNth1phi*IfThen(ToReal(conformalMethod) == 
+        2*alphaL*JacPDstandardNth1phi*IfThen(conformalMethod == 
         1,INV(phiL),-2)) + gtu22*(2*JacPDstandardNth2alpha + alphaL*(Ddetgt2 - 
         2*(gtu11*JacPDstandardNth1gt12 + gtu12*JacPDstandardNth1gt22 + 
         gtu13*JacPDstandardNth1gt23 + gtu12*JacPDstandardNth2gt12 + 
         gtu22*JacPDstandardNth2gt22 + gtu23*JacPDstandardNth2gt23 + 
         gtu13*JacPDstandardNth3gt12 + gtu23*JacPDstandardNth3gt22 + 
         gtu33*JacPDstandardNth3gt23)) - 
-        2*alphaL*JacPDstandardNth2phi*IfThen(ToReal(conformalMethod) == 
+        2*alphaL*JacPDstandardNth2phi*IfThen(conformalMethod == 
         1,INV(phiL),-2)) + gtu23*(2*JacPDstandardNth3alpha + alphaL*(Ddetgt3 - 
         2*(gtu11*JacPDstandardNth1gt13 + gtu12*JacPDstandardNth1gt23 + 
         gtu13*JacPDstandardNth1gt33 + gtu12*JacPDstandardNth2gt13 + 
         gtu22*JacPDstandardNth2gt23 + gtu23*JacPDstandardNth2gt33 + 
         gtu13*JacPDstandardNth3gt13 + gtu23*JacPDstandardNth3gt23 + 
         gtu33*JacPDstandardNth3gt33)) - 
-        2*alphaL*JacPDstandardNth3phi*IfThen(ToReal(conformalMethod) == 
+        2*alphaL*JacPDstandardNth3phi*IfThen(conformalMethod == 
         1,INV(phiL),-2)));
       
       beta3rhsL = -0.5*alphaL*em4phi*(gtu13*(2*JacPDstandardNth1alpha + 
@@ -1534,46 +1532,43 @@ static void ML_BSSN_NoVec_RHS1_Body(const cGH* restrict const cctkGH, const int 
         gtu12*JacPDstandardNth2gt11 + gtu22*JacPDstandardNth2gt12 + 
         gtu23*JacPDstandardNth2gt13 + gtu13*JacPDstandardNth3gt11 + 
         gtu23*JacPDstandardNth3gt12 + gtu33*JacPDstandardNth3gt13)) - 
-        2*alphaL*JacPDstandardNth1phi*IfThen(ToReal(conformalMethod) == 
+        2*alphaL*JacPDstandardNth1phi*IfThen(conformalMethod == 
         1,INV(phiL),-2)) + gtu23*(2*JacPDstandardNth2alpha + alphaL*(Ddetgt2 - 
         2*(gtu11*JacPDstandardNth1gt12 + gtu12*JacPDstandardNth1gt22 + 
         gtu13*JacPDstandardNth1gt23 + gtu12*JacPDstandardNth2gt12 + 
         gtu22*JacPDstandardNth2gt22 + gtu23*JacPDstandardNth2gt23 + 
         gtu13*JacPDstandardNth3gt12 + gtu23*JacPDstandardNth3gt22 + 
         gtu33*JacPDstandardNth3gt23)) - 
-        2*alphaL*JacPDstandardNth2phi*IfThen(ToReal(conformalMethod) == 
+        2*alphaL*JacPDstandardNth2phi*IfThen(conformalMethod == 
         1,INV(phiL),-2)) + gtu33*(2*JacPDstandardNth3alpha + alphaL*(Ddetgt3 - 
         2*(gtu11*JacPDstandardNth1gt13 + gtu12*JacPDstandardNth1gt23 + 
         gtu13*JacPDstandardNth1gt33 + gtu12*JacPDstandardNth2gt13 + 
         gtu22*JacPDstandardNth2gt23 + gtu23*JacPDstandardNth2gt33 + 
         gtu13*JacPDstandardNth3gt13 + gtu23*JacPDstandardNth3gt23 + 
         gtu33*JacPDstandardNth3gt33)) - 
-        2*alphaL*JacPDstandardNth3phi*IfThen(ToReal(conformalMethod) == 
+        2*alphaL*JacPDstandardNth3phi*IfThen(conformalMethod == 
         1,INV(phiL),-2)));
     }
     else
     {
-      beta1rhsL = theta*((Xt1L - beta1L*eta*ToReal(BetaDriver))*(1 - 
-        ToReal(ShiftBCoeff)) + 
-        B1L*ToReal(ShiftBCoeff))*ToReal(ShiftGammaCoeff);
+      beta1rhsL = ((Xt1L - beta1L*BetaDriver*eta)*(1 - ShiftBCoeff) + 
+        B1L*ShiftBCoeff)*ShiftGammaCoeff*theta;
       
-      beta2rhsL = theta*((Xt2L - beta2L*eta*ToReal(BetaDriver))*(1 - 
-        ToReal(ShiftBCoeff)) + 
-        B2L*ToReal(ShiftBCoeff))*ToReal(ShiftGammaCoeff);
+      beta2rhsL = ((Xt2L - beta2L*BetaDriver*eta)*(1 - ShiftBCoeff) + 
+        B2L*ShiftBCoeff)*ShiftGammaCoeff*theta;
       
-      beta3rhsL = theta*((Xt3L - beta3L*eta*ToReal(BetaDriver))*(1 - 
-        ToReal(ShiftBCoeff)) + 
-        B3L*ToReal(ShiftBCoeff))*ToReal(ShiftGammaCoeff);
+      beta3rhsL = ((Xt3L - beta3L*BetaDriver*eta)*(1 - ShiftBCoeff) + 
+        B3L*ShiftBCoeff)*ShiftGammaCoeff*theta;
     }
     
     CCTK_REAL B1rhsL CCTK_ATTRIBUTE_UNUSED = (dotXt1 - 
-      B1L*eta*ToReal(BetaDriver))*ToReal(ShiftBCoeff);
+      B1L*BetaDriver*eta)*ShiftBCoeff;
     
     CCTK_REAL B2rhsL CCTK_ATTRIBUTE_UNUSED = (dotXt2 - 
-      B2L*eta*ToReal(BetaDriver))*ToReal(ShiftBCoeff);
+      B2L*BetaDriver*eta)*ShiftBCoeff;
     
     CCTK_REAL B3rhsL CCTK_ATTRIBUTE_UNUSED = (dotXt3 - 
-      B3L*eta*ToReal(BetaDriver))*ToReal(ShiftBCoeff);
+      B3L*BetaDriver*eta)*ShiftBCoeff;
     /* Copy local copies back to grid functions */
     alpharhs[index] = alpharhsL;
     Arhs[index] = ArhsL;

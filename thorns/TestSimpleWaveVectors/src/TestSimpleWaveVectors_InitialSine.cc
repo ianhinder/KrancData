@@ -104,10 +104,10 @@ static void TestSimpleWaveVectors_InitialSine_Body(const cGH* restrict const cct
     /* Precompute derivatives */
     /* Calculate temporaries and grid functions */
     CCTK_REAL_VEC phiL CCTK_ATTRIBUTE_UNUSED = 
-      ksin(kmul(ksub(xL,t),ToReal(6.28318530717958647692528676656)));
+      ksin(kmul(kmul(ToReal(3.14159265358979323846264338328),ksub(xL,t)),ToReal(2)));
     
     CCTK_REAL_VEC piL CCTK_ATTRIBUTE_UNUSED = 
-      kmul(kcos(kmul(ksub(xL,t),ToReal(6.28318530717958647692528676656))),ToReal(-6.28318530717958647692528676656));
+      kmul(kmul(ToReal(3.14159265358979323846264338328),kcos(kmul(ToReal(2),kmul(ToReal(3.14159265358979323846264338328),ksub(xL,t))))),ToReal(-2));
     /* Copy local copies back to grid functions */
     vec_store_partial_prepare(i,vecimin,vecimax);
     vec_store_nta_partial(phi[index],phiL);

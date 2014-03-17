@@ -152,7 +152,7 @@ static void eulerauto_cons_calc_flux_1_Body(const cGH* restrict const cctkGH, co
       ShiftMinus1rhoRight*ShiftMinus1v1Right;
     
     CCTK_REAL DenFluxL CCTK_ATTRIBUTE_UNUSED = 0.5*(DenFluxLeft + 
-      DenFluxRight + (-DenLeftL + ShiftMinus1DenRight)*ToReal(hlleAlpha));
+      DenFluxRight + hlleAlpha*(-DenLeftL + ShiftMinus1DenRight));
     
     CCTK_REAL S1FluxLeft CCTK_ATTRIBUTE_UNUSED = pLeftL + 
       rhoLeftL*SQR(v1LeftL);
@@ -161,7 +161,7 @@ static void eulerauto_cons_calc_flux_1_Body(const cGH* restrict const cctkGH, co
       ShiftMinus1rhoRight*SQR(ShiftMinus1v1Right);
     
     CCTK_REAL S1FluxL CCTK_ATTRIBUTE_UNUSED = 0.5*(S1FluxLeft + 
-      S1FluxRight + (-S1LeftL + ShiftMinus1S1Right)*ToReal(hlleAlpha));
+      S1FluxRight + hlleAlpha*(-S1LeftL + ShiftMinus1S1Right));
     
     CCTK_REAL S2FluxLeft CCTK_ATTRIBUTE_UNUSED = rhoLeftL*v1LeftL*v2LeftL;
     
@@ -169,7 +169,7 @@ static void eulerauto_cons_calc_flux_1_Body(const cGH* restrict const cctkGH, co
       ShiftMinus1rhoRight*ShiftMinus1v1Right*ShiftMinus1v2Right;
     
     CCTK_REAL S2FluxL CCTK_ATTRIBUTE_UNUSED = 0.5*(S2FluxLeft + 
-      S2FluxRight + (-S2LeftL + ShiftMinus1S2Right)*ToReal(hlleAlpha));
+      S2FluxRight + hlleAlpha*(-S2LeftL + ShiftMinus1S2Right));
     
     CCTK_REAL S3FluxLeft CCTK_ATTRIBUTE_UNUSED = rhoLeftL*v1LeftL*v3LeftL;
     
@@ -177,7 +177,7 @@ static void eulerauto_cons_calc_flux_1_Body(const cGH* restrict const cctkGH, co
       ShiftMinus1rhoRight*ShiftMinus1v1Right*ShiftMinus1v3Right;
     
     CCTK_REAL S3FluxL CCTK_ATTRIBUTE_UNUSED = 0.5*(S3FluxLeft + 
-      S3FluxRight + (-S3LeftL + ShiftMinus1S3Right)*ToReal(hlleAlpha));
+      S3FluxRight + hlleAlpha*(-S3LeftL + ShiftMinus1S3Right));
     
     CCTK_REAL EnFluxLeft CCTK_ATTRIBUTE_UNUSED = (EnLeftL + 
       pLeftL)*v1LeftL;
@@ -186,7 +186,7 @@ static void eulerauto_cons_calc_flux_1_Body(const cGH* restrict const cctkGH, co
       ShiftMinus1pRight)*ShiftMinus1v1Right;
     
     CCTK_REAL EnFluxL CCTK_ATTRIBUTE_UNUSED = 0.5*(EnFluxLeft + 
-      EnFluxRight + (-EnLeftL + ShiftMinus1EnRight)*ToReal(hlleAlpha));
+      EnFluxRight + hlleAlpha*(-EnLeftL + ShiftMinus1EnRight));
     /* Copy local copies back to grid functions */
     DenFlux[index] = DenFluxL;
     EnFlux[index] = EnFluxL;

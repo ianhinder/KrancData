@@ -104,7 +104,7 @@ static void eulerauto_cons_calc_conserved_Body(const cGH* restrict const cctkGH,
     
     CCTK_REAL S3L CCTK_ATTRIBUTE_UNUSED = rhoL*v3L;
     
-    CCTK_REAL EnL CCTK_ATTRIBUTE_UNUSED = pL*INV(-1 + ToReal(gamma)) + 
+    CCTK_REAL EnL CCTK_ATTRIBUTE_UNUSED = pL*INV(-1 + gamma) + 
       0.5*rhoL*(SQR(v1L) + SQR(v2L) + SQR(v3L));
     /* Copy local copies back to grid functions */
     Den[index] = DenL;
