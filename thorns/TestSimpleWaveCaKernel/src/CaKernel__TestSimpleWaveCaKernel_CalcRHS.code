@@ -42,8 +42,8 @@ CAKERNEL_TestSimpleWaveCaKernel_CalcRHS_Begin
   CAKERNEL_TestSimpleWaveCaKernel_CalcRHS_Computations_Begin
     /* Assign local copies of grid functions */
     
-    CCTK_REAL phiL CCTK_ATTRIBUTE_UNUSED = phi[index];
-    CCTK_REAL piL CCTK_ATTRIBUTE_UNUSED = pi[index];
+    CCTK_REAL phiL CCTK_ATTRIBUTE_UNUSED = I3D(phi,0,0,0);
+    CCTK_REAL piL CCTK_ATTRIBUTE_UNUSED = I3D(pi,0,0,0);
     
     /* Include user supplied include files */
     /* Precompute derivatives */

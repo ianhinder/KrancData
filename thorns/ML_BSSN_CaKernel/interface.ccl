@@ -9,7 +9,6 @@ inherits:   Accelerator ADMBase Boundary GenericFD Grid TmunuBase
 USES INCLUDE: CaCUDALib_driver_support.h
 USES INCLUDE: loopcontrol.h
 USES INCLUDE: Symmetry.h
-USES INCLUDE: vectors.h
 USES INCLUDE: Boundary.h
 
 CCTK_INT FUNCTION MoLRegisterEvolved(CCTK_INT IN EvolvedIndex, CCTK_INT IN RHSIndex)

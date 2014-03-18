@@ -42,7 +42,7 @@ CAKERNEL_TestSimpleWaveCaKernel_InitialSine_Begin
   CAKERNEL_TestSimpleWaveCaKernel_InitialSine_Computations_Begin
     /* Assign local copies of grid functions */
     
-    CCTK_REAL xL CCTK_ATTRIBUTE_UNUSED = x[index];
+    CCTK_REAL xL CCTK_ATTRIBUTE_UNUSED = I3D(x,0,0,0);
     
     /* Include user supplied include files */
     /* Precompute derivatives */
