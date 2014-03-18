@@ -233,12 +233,12 @@ static void ML_BSSN_NoVec_RHS2_Body(const cGH* restrict const cctkGH, const int 
     }
     else
     {
-      eTxxL = ToReal(0.0);
-      eTxyL = ToReal(0.0);
-      eTxzL = ToReal(0.0);
-      eTyyL = ToReal(0.0);
-      eTyzL = ToReal(0.0);
-      eTzzL = ToReal(0.0);
+      eTxxL = 0.;
+      eTxyL = 0.;
+      eTxzL = 0.;
+      eTyyL = 0.;
+      eTyzL = 0.;
+      eTzzL = 0.;
     }
     
     CCTK_REAL dJ111L, dJ112L, dJ113L, dJ122L, dJ123L, dJ133L, dJ211L, dJ212L, dJ213L, dJ222L, dJ223L, dJ233L, dJ311L, dJ312L, dJ313L, dJ322L, dJ323L, dJ333L, J11L, J12L, J13L, J21L, J22L, J23L, J31L, J32L, J33L CCTK_ATTRIBUTE_UNUSED ;
