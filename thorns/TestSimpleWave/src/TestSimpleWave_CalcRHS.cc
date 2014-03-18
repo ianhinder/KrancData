@@ -49,20 +49,17 @@ static void TestSimpleWave_CalcRHS_Body(const cGH* restrict const cctkGH, const 
   const ptrdiff_t cctkLbnd1 CCTK_ATTRIBUTE_UNUSED = cctk_lbnd[0];
   const ptrdiff_t cctkLbnd2 CCTK_ATTRIBUTE_UNUSED = cctk_lbnd[1];
   const ptrdiff_t cctkLbnd3 CCTK_ATTRIBUTE_UNUSED = cctk_lbnd[2];
-  const CCTK_REAL t CCTK_ATTRIBUTE_UNUSED = ToReal(cctk_time);
+  const CCTK_REAL t CCTK_ATTRIBUTE_UNUSED = cctk_time;
   const CCTK_REAL cctkOriginSpace1 CCTK_ATTRIBUTE_UNUSED = 
-    ToReal(CCTK_ORIGIN_SPACE(0));
+    CCTK_ORIGIN_SPACE(0);
   const CCTK_REAL cctkOriginSpace2 CCTK_ATTRIBUTE_UNUSED = 
-    ToReal(CCTK_ORIGIN_SPACE(1));
+    CCTK_ORIGIN_SPACE(1);
   const CCTK_REAL cctkOriginSpace3 CCTK_ATTRIBUTE_UNUSED = 
-    ToReal(CCTK_ORIGIN_SPACE(2));
-  const CCTK_REAL dt CCTK_ATTRIBUTE_UNUSED = ToReal(CCTK_DELTA_TIME);
-  const CCTK_REAL dx CCTK_ATTRIBUTE_UNUSED = 
-    ToReal(CCTK_DELTA_SPACE(0));
-  const CCTK_REAL dy CCTK_ATTRIBUTE_UNUSED = 
-    ToReal(CCTK_DELTA_SPACE(1));
-  const CCTK_REAL dz CCTK_ATTRIBUTE_UNUSED = 
-    ToReal(CCTK_DELTA_SPACE(2));
+    CCTK_ORIGIN_SPACE(2);
+  const CCTK_REAL dt CCTK_ATTRIBUTE_UNUSED = CCTK_DELTA_TIME;
+  const CCTK_REAL dx CCTK_ATTRIBUTE_UNUSED = CCTK_DELTA_SPACE(0);
+  const CCTK_REAL dy CCTK_ATTRIBUTE_UNUSED = CCTK_DELTA_SPACE(1);
+  const CCTK_REAL dz CCTK_ATTRIBUTE_UNUSED = CCTK_DELTA_SPACE(2);
   const CCTK_REAL dxi CCTK_ATTRIBUTE_UNUSED = pow(dx,-1);
   const CCTK_REAL dyi CCTK_ATTRIBUTE_UNUSED = pow(dy,-1);
   const CCTK_REAL dzi CCTK_ATTRIBUTE_UNUSED = pow(dz,-1);
