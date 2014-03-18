@@ -140,24 +140,24 @@ CAKERNEL_ML_BSSN_CaKernel_convertFromADMBase_Begin
   CAKERNEL_ML_BSSN_CaKernel_convertFromADMBase_Computations_Begin
     /* Assign local copies of grid functions */
     
-    CCTK_REAL alpL CCTK_ATTRIBUTE_UNUSED = vec_load(I3D(alp,0,0,0));
-    CCTK_REAL betaxL CCTK_ATTRIBUTE_UNUSED = vec_load(I3D(betax,0,0,0));
-    CCTK_REAL betayL CCTK_ATTRIBUTE_UNUSED = vec_load(I3D(betay,0,0,0));
-    CCTK_REAL betazL CCTK_ATTRIBUTE_UNUSED = vec_load(I3D(betaz,0,0,0));
-    CCTK_REAL gxxL CCTK_ATTRIBUTE_UNUSED = vec_load(I3D(gxx,0,0,0));
-    CCTK_REAL gxyL CCTK_ATTRIBUTE_UNUSED = vec_load(I3D(gxy,0,0,0));
-    CCTK_REAL gxzL CCTK_ATTRIBUTE_UNUSED = vec_load(I3D(gxz,0,0,0));
-    CCTK_REAL gyyL CCTK_ATTRIBUTE_UNUSED = vec_load(I3D(gyy,0,0,0));
-    CCTK_REAL gyzL CCTK_ATTRIBUTE_UNUSED = vec_load(I3D(gyz,0,0,0));
-    CCTK_REAL gzzL CCTK_ATTRIBUTE_UNUSED = vec_load(I3D(gzz,0,0,0));
-    CCTK_REAL kxxL CCTK_ATTRIBUTE_UNUSED = vec_load(I3D(kxx,0,0,0));
-    CCTK_REAL kxyL CCTK_ATTRIBUTE_UNUSED = vec_load(I3D(kxy,0,0,0));
-    CCTK_REAL kxzL CCTK_ATTRIBUTE_UNUSED = vec_load(I3D(kxz,0,0,0));
-    CCTK_REAL kyyL CCTK_ATTRIBUTE_UNUSED = vec_load(I3D(kyy,0,0,0));
-    CCTK_REAL kyzL CCTK_ATTRIBUTE_UNUSED = vec_load(I3D(kyz,0,0,0));
-    CCTK_REAL kzzL CCTK_ATTRIBUTE_UNUSED = vec_load(I3D(kzz,0,0,0));
-    CCTK_REAL phiL CCTK_ATTRIBUTE_UNUSED = vec_load(I3D(phi,0,0,0));
-    CCTK_REAL trKL CCTK_ATTRIBUTE_UNUSED = vec_load(I3D(trK,0,0,0));
+    CCTK_REAL alpL CCTK_ATTRIBUTE_UNUSED = vec_load(alp[index]);
+    CCTK_REAL betaxL CCTK_ATTRIBUTE_UNUSED = vec_load(betax[index]);
+    CCTK_REAL betayL CCTK_ATTRIBUTE_UNUSED = vec_load(betay[index]);
+    CCTK_REAL betazL CCTK_ATTRIBUTE_UNUSED = vec_load(betaz[index]);
+    CCTK_REAL gxxL CCTK_ATTRIBUTE_UNUSED = vec_load(gxx[index]);
+    CCTK_REAL gxyL CCTK_ATTRIBUTE_UNUSED = vec_load(gxy[index]);
+    CCTK_REAL gxzL CCTK_ATTRIBUTE_UNUSED = vec_load(gxz[index]);
+    CCTK_REAL gyyL CCTK_ATTRIBUTE_UNUSED = vec_load(gyy[index]);
+    CCTK_REAL gyzL CCTK_ATTRIBUTE_UNUSED = vec_load(gyz[index]);
+    CCTK_REAL gzzL CCTK_ATTRIBUTE_UNUSED = vec_load(gzz[index]);
+    CCTK_REAL kxxL CCTK_ATTRIBUTE_UNUSED = vec_load(kxx[index]);
+    CCTK_REAL kxyL CCTK_ATTRIBUTE_UNUSED = vec_load(kxy[index]);
+    CCTK_REAL kxzL CCTK_ATTRIBUTE_UNUSED = vec_load(kxz[index]);
+    CCTK_REAL kyyL CCTK_ATTRIBUTE_UNUSED = vec_load(kyy[index]);
+    CCTK_REAL kyzL CCTK_ATTRIBUTE_UNUSED = vec_load(kyz[index]);
+    CCTK_REAL kzzL CCTK_ATTRIBUTE_UNUSED = vec_load(kzz[index]);
+    CCTK_REAL phiL CCTK_ATTRIBUTE_UNUSED = vec_load(phi[index]);
+    CCTK_REAL trKL CCTK_ATTRIBUTE_UNUSED = vec_load(trK[index]);
     
     
     /* Include user supplied include files */

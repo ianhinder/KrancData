@@ -140,19 +140,19 @@ CAKERNEL_ML_BSSN_CaKernel_enforce_Begin
   CAKERNEL_ML_BSSN_CaKernel_enforce_Computations_Begin
     /* Assign local copies of grid functions */
     
-    CCTK_REAL alphaL CCTK_ATTRIBUTE_UNUSED = vec_load(I3D(alpha,0,0,0));
-    CCTK_REAL At11L CCTK_ATTRIBUTE_UNUSED = vec_load(I3D(At11,0,0,0));
-    CCTK_REAL At12L CCTK_ATTRIBUTE_UNUSED = vec_load(I3D(At12,0,0,0));
-    CCTK_REAL At13L CCTK_ATTRIBUTE_UNUSED = vec_load(I3D(At13,0,0,0));
-    CCTK_REAL At22L CCTK_ATTRIBUTE_UNUSED = vec_load(I3D(At22,0,0,0));
-    CCTK_REAL At23L CCTK_ATTRIBUTE_UNUSED = vec_load(I3D(At23,0,0,0));
-    CCTK_REAL At33L CCTK_ATTRIBUTE_UNUSED = vec_load(I3D(At33,0,0,0));
-    CCTK_REAL gt11L CCTK_ATTRIBUTE_UNUSED = vec_load(I3D(gt11,0,0,0));
-    CCTK_REAL gt12L CCTK_ATTRIBUTE_UNUSED = vec_load(I3D(gt12,0,0,0));
-    CCTK_REAL gt13L CCTK_ATTRIBUTE_UNUSED = vec_load(I3D(gt13,0,0,0));
-    CCTK_REAL gt22L CCTK_ATTRIBUTE_UNUSED = vec_load(I3D(gt22,0,0,0));
-    CCTK_REAL gt23L CCTK_ATTRIBUTE_UNUSED = vec_load(I3D(gt23,0,0,0));
-    CCTK_REAL gt33L CCTK_ATTRIBUTE_UNUSED = vec_load(I3D(gt33,0,0,0));
+    CCTK_REAL alphaL CCTK_ATTRIBUTE_UNUSED = vec_load(alpha[index]);
+    CCTK_REAL At11L CCTK_ATTRIBUTE_UNUSED = vec_load(At11[index]);
+    CCTK_REAL At12L CCTK_ATTRIBUTE_UNUSED = vec_load(At12[index]);
+    CCTK_REAL At13L CCTK_ATTRIBUTE_UNUSED = vec_load(At13[index]);
+    CCTK_REAL At22L CCTK_ATTRIBUTE_UNUSED = vec_load(At22[index]);
+    CCTK_REAL At23L CCTK_ATTRIBUTE_UNUSED = vec_load(At23[index]);
+    CCTK_REAL At33L CCTK_ATTRIBUTE_UNUSED = vec_load(At33[index]);
+    CCTK_REAL gt11L CCTK_ATTRIBUTE_UNUSED = vec_load(gt11[index]);
+    CCTK_REAL gt12L CCTK_ATTRIBUTE_UNUSED = vec_load(gt12[index]);
+    CCTK_REAL gt13L CCTK_ATTRIBUTE_UNUSED = vec_load(gt13[index]);
+    CCTK_REAL gt22L CCTK_ATTRIBUTE_UNUSED = vec_load(gt22[index]);
+    CCTK_REAL gt23L CCTK_ATTRIBUTE_UNUSED = vec_load(gt23[index]);
+    CCTK_REAL gt33L CCTK_ATTRIBUTE_UNUSED = vec_load(gt33[index]);
     
     
     /* Include user supplied include files */
