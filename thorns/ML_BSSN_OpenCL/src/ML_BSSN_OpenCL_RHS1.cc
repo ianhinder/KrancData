@@ -1227,7 +1227,7 @@ static void ML_BSSN_OpenCL_RHS1_Body(const cGH* restrict const cctkGH, const int
   "    kdiv(ToReal(SpatialBetaDriverRadius),kfmax(rL,ToReal(SpatialBetaDriverRadius)));\n"
   "  \n"
   "  CCTK_REAL_VEC theta CCTK_ATTRIBUTE_UNUSED = \n"
-  "    kfmin(ToReal(1),kexp(knmsub(ToReal(1/SpatialShiftGammaCoeffRadius),rL,ToReal(1))));\n"
+  "    kfmin(ToReal(1),kexp(knmsub(ToReal(pow(SpatialShiftGammaCoeffRadius,-1)),rL,ToReal(1))));\n"
   "  \n"
   "  CCTK_REAL_VEC Ddetgt1 CCTK_ATTRIBUTE_UNUSED = \n"
   "    kmadd(gtu11,JacPDstandardNth1gt11,kmadd(ToReal(2),kmul(gtu12,JacPDstandardNth1gt12),kmadd(ToReal(2),kmul(gtu13,JacPDstandardNth1gt13),kmadd(gtu22,JacPDstandardNth1gt22,kmadd(ToReal(2),kmul(gtu23,JacPDstandardNth1gt23),kmul(gtu33,JacPDstandardNth1gt33))))));\n"
