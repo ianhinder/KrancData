@@ -22,7 +22,7 @@ namespace ML_BSSN_DGFE {
 
 /* DGFE Definitions */
 
-#define config_sdg_order      5
+#define config_sdg_order      4
 #define config_riemann_solver hrscc::LaxFriedrichsRS<DGFE_ML_BSSN_DGFE_convertFromADMBase, false>
 
 /* Export definitions */

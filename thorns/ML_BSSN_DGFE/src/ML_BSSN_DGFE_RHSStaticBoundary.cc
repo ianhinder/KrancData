@@ -59,7 +59,7 @@ extern "C" void ML_BSSN_DGFE_RHSStaticBoundary_SelectBCs(CCTK_ARGUMENTS)
 
 /* DGFE Definitions */
 
-#define config_sdg_order      5
+#define config_sdg_order      4
 #define config_riemann_solver hrscc::LaxFriedrichsRS<DGFE_ML_BSSN_DGFE_RHSStaticBoundary, false>
 
 /* Export definitions */
